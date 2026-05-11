@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 
 export default function SignupPage() {
@@ -42,16 +43,18 @@ export default function SignupPage() {
 
   if (status === 'confirm') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 w-full max-w-sm text-center">
-          <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div style={{ minHeight: '100vh', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px' }}>
+        <div style={{ background: '#111111', padding: 40, width: '100%', maxWidth: 380, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(204,34,34,0.12)', border: '2px solid #CC2222', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="24" height="24" fill="none" stroke="#CC2222" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Check your email</h2>
-          <p className="text-sm text-gray-500">
-            We sent a confirmation link to <strong>{form.email}</strong>. Click it to activate your account.
+          <h2 style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 22 }}>
+            Check your email
+          </h2>
+          <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.5)', fontSize: 14, lineHeight: 1.6 }}>
+            We sent a confirmation link to <strong style={{ color: '#ffffff' }}>{form.email}</strong>. Click it to activate your account.
           </p>
         </div>
       </div>
@@ -59,50 +62,50 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 w-full max-w-sm">
-        <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight block mb-8">FOMO</Link>
+    <div style={{ minHeight: '100vh', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px' }}>
+      <div style={{ background: '#111111', padding: 32, width: '100%', maxWidth: 400 }}>
+        <Link href="/" style={{ display: 'block', marginBottom: 32 }}>
+          <Image src="/images/FOMO-LOGO-Vector.svg" alt="FOMO" width={100} height={32} style={{ height: 28, width: 'auto' }} />
+        </Link>
 
-        <h1 className="text-lg font-semibold text-gray-900 mb-1">Create an account</h1>
-        <p className="text-sm text-gray-500 mb-6">
+        <h1 style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 22, marginBottom: 4 }}>
+          Create an account
+        </h1>
+        <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.45)', fontSize: 13, marginBottom: 24 }}>
           Already have one?{' '}
-          <Link href="/login" className="text-gray-900 font-medium hover:underline">Sign in</Link>
+          <Link href="/login" style={{ color: '#CC2222', textDecoration: 'none' }}>Sign in</Link>
         </p>
 
         {status === 'error' && (
-          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div style={{ marginBottom: 16, background: 'rgba(204,34,34,0.12)', border: '1px solid rgba(204,34,34,0.3)', padding: '12px 16px', fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#CC2222' }}>
             {errorMsg}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">First name<span className="text-red-500 ml-0.5">*</span></label>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label className="fomo-label">First name <span style={{ color: '#CC2222' }}>*</span></label>
               <input type="text" name="firstName" value={form.firstName} onChange={handleChange} required className="input" placeholder="Jane" />
             </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">Last name<span className="text-red-500 ml-0.5">*</span></label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <label className="fomo-label">Last name <span style={{ color: '#CC2222' }}>*</span></label>
               <input type="text" name="lastName" value={form.lastName} onChange={handleChange} required className="input" placeholder="Smith" />
             </div>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Email<span className="text-red-500 ml-0.5">*</span></label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <label className="fomo-label">Email <span style={{ color: '#CC2222' }}>*</span></label>
             <input type="email" name="email" value={form.email} onChange={handleChange} required className="input" placeholder="you@example.com" />
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Password<span className="text-red-500 ml-0.5">*</span></label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <label className="fomo-label">Password <span style={{ color: '#CC2222' }}>*</span></label>
             <input type="password" name="password" value={form.password} onChange={handleChange} required minLength={6} className="input" placeholder="At least 6 characters" />
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Confirm password<span className="text-red-500 ml-0.5">*</span></label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <label className="fomo-label">Confirm password <span style={{ color: '#CC2222' }}>*</span></label>
             <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} required className="input" placeholder="••••••••" />
           </div>
-          <button
-            type="submit"
-            disabled={status === 'loading'}
-            className="w-full bg-gray-900 hover:bg-gray-700 disabled:bg-gray-400 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors"
-          >
+          <button type="submit" disabled={status === 'loading'} className="fomo-btn-primary" style={{ marginTop: 8, width: '100%' }}>
             {status === 'loading' ? 'Creating account…' : 'Create account'}
           </button>
         </form>

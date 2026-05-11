@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import CreateEventForm from './CreateEventForm';
@@ -120,73 +121,74 @@ export default function AdminPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ minHeight: '100vh', background: '#000000' }}>
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">FOMO</Link>
-            <span className="text-sm text-gray-400">Admin</span>
+      <header style={{ background: '#000000', borderBottom: '1px solid #222222' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Link href="/">
+              <Image src="/images/FOMO-LOGO-Vector.svg" alt="FOMO" width={72} height={24} style={{ height: 24, width: 'auto' }} />
+            </Link>
+            <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Admin</span>
             {isAdmin && (
-              <span className="text-xs bg-gray-900 text-white px-2 py-0.5 rounded-full font-medium">Super Admin</span>
+              <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 9, background: '#CC2222', color: '#ffffff', padding: '3px 10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                Super Admin
+              </span>
             )}
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-400 hidden sm:block">{user.email}</span>
-            <Link
-              href="/admin/analytics"
-              className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
-            >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.2)' }}>{user.email}</span>
+            <Link href="/admin/analytics" style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.05em', textDecoration: 'none' }}>
               Analytics
             </Link>
-            <Link
-              href="/scan"
-              className="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-            >
+            <Link href="/scan" style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', background: '#CC2222', color: '#ffffff', padding: '8px 18px', borderRadius: 100, textDecoration: 'none' }}>
               Scan Tickets
             </Link>
-            <button
-              onClick={handleSignOut}
-              className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
-            >
+            <button onClick={handleSignOut} style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.3)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
               Sign out
             </button>
           </div>
         </div>
 
         {/* Tab Nav */}
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex gap-1">
-            {tabs.map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`relative px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                  tab === t
-                    ? 'border-gray-900 text-gray-900'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {t}
-                {t === 'Approvals' && pendingEvents.length > 0 && (
-                  <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold bg-orange-500 text-white rounded-full">
-                    {pendingEvents.length}
-                  </span>
-                )}
-                {t === 'SINPE' && sinpePendingCount > 0 && (
-                  <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold bg-blue-600 text-white rounded-full">
-                    {sinpePendingCount}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', display: 'flex', gap: 0, borderTop: '1px solid #1a1a1a' }}>
+          {tabs.map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              style={{
+                position: 'relative',
+                padding: '12px 16px',
+                fontFamily: 'Actay, sans-serif',
+                fontSize: 12,
+                letterSpacing: '0.05em',
+                color: tab === t ? '#ffffff' : 'rgba(255,255,255,0.35)',
+                background: 'none',
+                border: 'none',
+                borderBottom: tab === t ? '2px solid #CC2222' : '2px solid transparent',
+                cursor: 'pointer',
+                transition: 'color 0.15s',
+              }}
+            >
+              {t}
+              {t === 'Approvals' && pendingEvents.length > 0 && (
+                <span style={{ marginLeft: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, fontSize: 9, fontWeight: 'bold', background: '#f97316', color: '#ffffff', borderRadius: '50%' }}>
+                  {pendingEvents.length}
+                </span>
+              )}
+              {t === 'SINPE' && sinpePendingCount > 0 && (
+                <span style={{ marginLeft: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, fontSize: 9, fontWeight: 'bold', background: '#3b82f6', color: '#ffffff', borderRadius: '50%' }}>
+                  {sinpePendingCount}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-10">
+      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px 80px' }}>
         {loading ? (
-          <div className="text-center py-24 text-gray-400 text-sm">Loading…</div>
+          <div style={{ textAlign: 'center', padding: '80px 0', fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.3)', fontSize: 14, letterSpacing: '0.08em' }}>Loading…</div>
         ) : (
           <>
             {tab === 'Overview' && (
@@ -214,7 +216,7 @@ export default function AdminPage() {
             {tab === 'SINPE' && isAdmin && <SinpeTab />}
             {tab === 'Discounts' && isAdmin && <DiscountCodesTab events={events} />}
             {tab === 'New Event' && (
-              <div className="max-w-2xl">
+              <div style={{ maxWidth: 640 }}>
                 <CreateEventForm
                   userId={user.id}
                   userEmail={user.email}
@@ -236,31 +238,27 @@ export default function AdminPage() {
 
       {/* Reject reason modal */}
       {rejectingEvent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
-            <h3 className="text-base font-semibold text-gray-900 mb-1">Reject event</h3>
-            <p className="text-sm text-gray-500 mb-4">
-              Rejecting <strong>{rejectingEvent.title}</strong>. Optionally provide a reason for the organizer.
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: '0 16px' }}>
+          <div style={{ background: '#111111', border: '2px solid #333333', padding: 24, width: '100%', maxWidth: 420 }}>
+            <h3 style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 18, marginBottom: 8 }}>Reject event</h3>
+            <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 16, lineHeight: 1.6 }}>
+              Rejecting <strong style={{ color: '#ffffff' }}>{rejectingEvent.title}</strong>. Optionally provide a reason for the organizer.
             </p>
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Reason (optional)…"
               rows={3}
-              className="input resize-none mb-4"
+              className="input"
+              style={{ resize: 'none', marginBottom: 16, width: '100%' }}
             />
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => { setRejectingEvent(null); setRejectReason(''); }}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg border border-gray-200 transition-colors"
-              >
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button onClick={() => { setRejectingEvent(null); setRejectReason(''); }}
+                style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.5)', background: 'none', border: '1px solid #333333', padding: '10px 20px', cursor: 'pointer' }}>
                 Cancel
               </button>
-              <button
-                onClick={rejectEvent}
-                disabled={!!approvingId}
-                className="text-sm font-medium bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
-              >
+              <button onClick={rejectEvent} disabled={!!approvingId}
+                style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, background: '#CC2222', color: '#ffffff', border: 'none', padding: '10px 20px', cursor: 'pointer', opacity: approvingId ? 0.5 : 1 }}>
                 {approvingId ? 'Rejecting…' : 'Reject Event'}
               </button>
             </div>
@@ -365,19 +363,17 @@ function fmtEventPrice(price, currency) {
 /* ── Overview ── */
 function OverviewTab({ events, orders, usdRevenue, crcRevenue, ticketsSold, isAdmin }) {
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
         <StatCard label={isAdmin ? 'Total Orders' : 'Your Orders'} value={orders.length} icon="🧾" />
         <RevenueStatCard label={isAdmin ? 'Total Revenue' : 'Your Revenue'} usdRevenue={usdRevenue} crcRevenue={crcRevenue} />
         <StatCard label="Tickets Sold" value={ticketsSold} icon="🎟️" />
       </div>
       {isAdmin && orders.length > 0 && (
-        <div className="flex justify-end">
-          <button
-            onClick={() => exportAllAttendees(orders)}
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button onClick={() => exportAllAttendees(orders)}
+            style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', background: 'none', border: '1px solid #333333', padding: '10px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             Export All Attendees
@@ -385,41 +381,41 @@ function OverviewTab({ events, orders, usdRevenue, crcRevenue, ticketsSold, isAd
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4">Recent Orders</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+        <div style={{ background: '#111111', border: '1px solid #222222', padding: 24 }}>
+          <h3 style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 16 }}>Recent Orders</h3>
           {orders.length === 0 ? (
-            <p className="text-sm text-gray-400">No orders yet.</p>
+            <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.25)', fontSize: 13 }}>No orders yet.</p>
           ) : (
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {orders.slice(0, 5).map((o) => (
-                <div key={o.id} className="flex items-center justify-between">
+                <div key={o.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{o.buyer_name}</p>
-                    <p className="text-xs text-gray-400">{o.events?.title}</p>
+                    <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#ffffff', marginBottom: 2 }}>{o.buyer_name}</p>
+                    <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>{o.events?.title}</p>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{fmtOrderPrice(o.total_price, o.events?.currency)}</span>
+                  <span style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', fontSize: 14, color: '#CC2222' }}>{fmtOrderPrice(o.total_price, o.events?.currency)}</span>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4">
+        <div style={{ background: '#111111', border: '1px solid #222222', padding: 24 }}>
+          <h3 style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 16 }}>
             {isAdmin ? 'All Events' : 'Your Events'}
           </h3>
           {events.length === 0 ? (
-            <p className="text-sm text-gray-400">No events yet.</p>
+            <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.25)', fontSize: 13 }}>No events yet.</p>
           ) : (
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {events.slice(0, 5).map((e) => (
-                <div key={e.id} className="flex items-center justify-between">
+                <div key={e.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{e.title}</p>
-                    <p className="text-xs text-gray-400">{new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                    <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#ffffff', marginBottom: 2 }}>{e.title}</p>
+                    <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>{new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                   </div>
-                  <span className="text-xs text-gray-500">{e.tickets_remaining}/{e.total_tickets} left</span>
+                  <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{e.tickets_remaining}/{e.total_tickets} left</span>
                 </div>
               ))}
             </div>
@@ -432,10 +428,10 @@ function OverviewTab({ events, orders, usdRevenue, crcRevenue, ticketsSold, isAd
 
 function StatCard({ label, value, icon }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-      <div className="text-2xl mb-3">{icon}</div>
-      <p className="text-3xl font-bold text-gray-900">{value}</p>
-      <p className="text-sm text-gray-500 mt-1">{label}</p>
+    <div style={{ background: '#111111', border: '1px solid #222222', padding: 24 }}>
+      <div style={{ fontSize: 22, marginBottom: 12 }}>{icon}</div>
+      <p style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 32, margin: 0 }}>{value}</p>
+      <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 6 }}>{label}</p>
     </div>
   );
 }
@@ -445,12 +441,12 @@ function RevenueStatCard({ label, usdRevenue, crcRevenue }) {
   const hasCrc = crcRevenue > 0;
   const neither = !hasUsd && !hasCrc;
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-      <div className="text-2xl mb-3">💰</div>
-      {neither && <p className="text-3xl font-bold text-gray-900">$0.00</p>}
-      {hasUsd && <p className={`font-bold text-gray-900 ${hasCrc ? 'text-2xl' : 'text-3xl'}`}>${usdRevenue.toFixed(2)} <span className="text-sm font-normal text-gray-400">USD</span></p>}
-      {hasCrc && <p className={`font-bold text-gray-900 ${hasUsd ? 'text-2xl mt-1' : 'text-3xl'}`}>₡{Math.round(crcRevenue).toLocaleString('es-CR')} <span className="text-sm font-normal text-gray-400">CRC</span></p>}
-      <p className="text-sm text-gray-500 mt-1">{label}</p>
+    <div style={{ background: '#111111', border: '1px solid #222222', padding: 24 }}>
+      <div style={{ fontSize: 22, marginBottom: 12 }}>💰</div>
+      {neither && <p style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 32, margin: 0 }}>$0.00</p>}
+      {hasUsd && <p style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: hasCrc ? 24 : 32, margin: 0 }}>${usdRevenue.toFixed(2)} <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, fontStyle: 'normal', fontWeight: 400, color: 'rgba(255,255,255,0.3)' }}>USD</span></p>}
+      {hasCrc && <p style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: hasUsd ? 24 : 32, margin: hasUsd ? '4px 0 0' : 0 }}>₡{Math.round(crcRevenue).toLocaleString('es-CR')} <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, fontStyle: 'normal', fontWeight: 400, color: 'rgba(255,255,255,0.3)' }}>CRC</span></p>}
+      <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 6 }}>{label}</p>
     </div>
   );
 }
@@ -459,48 +455,42 @@ function RevenueStatCard({ label, usdRevenue, crcRevenue }) {
 function ApprovalsTab({ pendingEvents, approvingId, onApprove, onReject }) {
   if (pendingEvents.length === 0) {
     return (
-      <div className="text-center py-24">
-        <p className="text-gray-400 text-sm">No pending events. You're all caught up.</p>
+      <div style={{ textAlign: 'center', padding: '80px 0' }}>
+        <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.25)', fontSize: 14, letterSpacing: '0.05em' }}>No pending events. You&apos;re all caught up.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-gray-500">{pendingEvents.length} event{pendingEvents.length !== 1 ? 's' : ''} awaiting review</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.05em' }}>{pendingEvents.length} event{pendingEvents.length !== 1 ? 's' : ''} awaiting review</p>
       {pendingEvents.map((event) => (
-        <div key={event.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <h3 className="text-base font-semibold text-gray-900">{event.title}</h3>
+        <div key={event.id} style={{ background: '#111111', border: '1px solid #333333', padding: 20 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h3 style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 16, margin: 0 }}>{event.title}</h3>
               {event.description && (
-                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{event.description}</p>
+                <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.45)', fontSize: 13, marginTop: 6, lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{event.description}</p>
               )}
-              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-xs text-gray-500">
-                <span>
-                  {new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
-                  {' · '}
-                  {new Date(event.date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-                </span>
-                <span>{event.location}</span>
-                <span>{fmtEventPrice(event.price, event.currency)}</span>
-                <span>{event.total_tickets} tickets</span>
-                {event.organizer_email && <span>by {event.organizer_email}</span>}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 16px', marginTop: 10 }}>
+                {[
+                  `${new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })} · ${new Date(event.date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`,
+                  event.location,
+                  fmtEventPrice(event.price, event.currency),
+                  `${event.total_tickets} tickets`,
+                  event.organizer_email ? `by ${event.organizer_email}` : null,
+                ].filter(Boolean).map((t, i) => (
+                  <span key={i} style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.04em' }}>{t}</span>
+                ))}
               </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-              <button
-                onClick={() => onReject(event)}
-                disabled={!!approvingId}
-                className="text-sm font-medium text-red-600 hover:text-red-800 px-4 py-2 rounded-lg border border-red-200 hover:border-red-300 transition-colors disabled:opacity-50"
-              >
+            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <button onClick={() => onReject(event)} disabled={!!approvingId}
+                style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: '#CC2222', background: 'none', border: '1px solid rgba(204,34,34,0.4)', padding: '8px 16px', cursor: 'pointer', opacity: approvingId ? 0.5 : 1 }}>
                 Reject
               </button>
-              <button
-                onClick={() => onApprove(event.id)}
-                disabled={!!approvingId}
-                className="text-sm font-medium bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
-              >
+              <button onClick={() => onApprove(event.id)} disabled={!!approvingId}
+                style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, background: '#CC2222', color: '#ffffff', border: 'none', padding: '8px 16px', cursor: 'pointer', opacity: approvingId ? 0.5 : 1 }}>
                 {approvingId === event.id ? 'Approving…' : 'Approve'}
               </button>
             </div>
@@ -514,89 +504,78 @@ function ApprovalsTab({ pendingEvents, approvingId, onApprove, onReject }) {
 /* ── Status badge ── */
 function StatusBadge({ status }) {
   const styles = {
-    approved: 'bg-green-50 text-green-700 border-green-200',
-    pending: 'bg-orange-50 text-orange-600 border-orange-200',
-    rejected: 'bg-red-50 text-red-600 border-red-200',
+    approved: { color: '#4ade80', background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)' },
+    pending: { color: '#fb923c', background: 'rgba(251,146,60,0.08)', border: '1px solid rgba(251,146,60,0.25)' },
+    rejected: { color: '#CC2222', background: 'rgba(204,34,34,0.08)', border: '1px solid rgba(204,34,34,0.25)' },
   };
   const labels = { approved: 'Live', pending: 'Pending', rejected: 'Rejected' };
+  const s = styles[status] ?? { color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' };
   return (
-    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${styles[status] ?? 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+    <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', ...s }}>
       {labels[status] ?? status}
     </span>
   );
 }
 
+const thCell = { fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'left', padding: '10px 16px', borderBottom: '1px solid #1a1a1a', fontWeight: 400 };
+const tdCell = { fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.75)', padding: '14px 16px', verticalAlign: 'middle', borderBottom: '1px solid #1a1a1a' };
+
 /* ── Events ── */
 function EventsTab({ events, orders, isAdmin, deletingId, onEdit, onDelete }) {
   if (events.length === 0) {
-    return <p className="text-gray-400 text-sm py-12 text-center">No events yet.</p>;
+    return <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.25)', fontSize: 14, padding: '48px 0', textAlign: 'center' }}>No events yet.</p>;
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-      <table className="w-full text-sm">
+    <div style={{ background: '#111111', border: '1px solid #222222', overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr className="border-b border-gray-100 bg-gray-50">
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Event</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Date</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Price</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Tickets</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Status</th>
-            <th className="px-6 py-3" />
+          <tr style={{ background: '#0d0d0d' }}>
+            <th style={thCell}>Event</th>
+            <th style={thCell}>Date</th>
+            <th style={thCell}>Price</th>
+            <th style={thCell}>Tickets</th>
+            <th style={thCell}>Status</th>
+            <th style={{ ...thCell, textAlign: 'right' }} />
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody>
           {events.map((event) => (
-            <tr key={event.id} className="hover:bg-gray-50 transition-colors">
-              <td className="px-6 py-4">
-                <p className="font-medium text-gray-900">{event.title}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{event.location}</p>
+            <tr key={event.id}>
+              <td style={tdCell}>
+                <p style={{ color: '#ffffff', marginBottom: 2, fontWeight: 400 }}>{event.title}</p>
+                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>{event.location}</p>
               </td>
-              <td className="px-6 py-4 text-gray-600">
-                {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              </td>
-              <td className="px-6 py-4 text-gray-600">
-                {fmtEventPrice(event.price, event.currency)}
-              </td>
-              <td className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-20 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                    <div
-                      className="h-full bg-gray-900 rounded-full"
-                      style={{ width: `${Math.round(((event.total_tickets - event.tickets_remaining) / event.total_tickets) * 100)}%` }}
-                    />
+              <td style={tdCell}>{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+              <td style={tdCell}>{fmtEventPrice(event.price, event.currency)}</td>
+              <td style={tdCell}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 64, height: 3, background: '#222222', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', background: '#CC2222', width: `${Math.round(((event.total_tickets - event.tickets_remaining) / event.total_tickets) * 100)}%` }} />
                   </div>
-                  <span className="text-xs text-gray-500">{event.tickets_remaining}/{event.total_tickets}</span>
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{event.tickets_remaining}/{event.total_tickets}</span>
                 </div>
               </td>
-              <td className="px-6 py-4">
+              <td style={tdCell}>
                 <StatusBadge status={event.status ?? 'pending'} />
                 {event.status === 'rejected' && event.rejection_reason && (
-                  <p className="text-[11px] text-gray-400 mt-1 max-w-[160px] truncate" title={event.rejection_reason}>
+                  <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', marginTop: 4, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={event.rejection_reason}>
                     {event.rejection_reason}
                   </p>
                 )}
               </td>
-              <td className="px-6 py-4">
-                <div className="flex items-center justify-end gap-2">
-                  <button
-                    onClick={() => exportEventAttendees(event, orders)}
-                    className="text-xs font-medium text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
-                    title="Download attendee list as CSV"
-                  >
+              <td style={{ ...tdCell, textAlign: 'right' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
+                  <button onClick={() => exportEventAttendees(event, orders)} title="Download CSV"
+                    style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)', background: 'none', border: '1px solid #333333', padding: '6px 12px', cursor: 'pointer' }}>
                     Export
                   </button>
-                  <button
-                    onClick={() => onEdit(event)}
-                    className="text-xs font-medium text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
-                  >
+                  <button onClick={() => onEdit(event)}
+                    style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)', background: 'none', border: '1px solid #333333', padding: '6px 12px', cursor: 'pointer' }}>
                     Edit
                   </button>
-                  <button
-                    onClick={() => onDelete(event.id)}
-                    disabled={deletingId === event.id}
-                    className="text-xs font-medium text-red-500 hover:text-red-700 px-3 py-1.5 rounded-lg border border-red-100 hover:border-red-200 transition-colors disabled:opacity-50"
-                  >
+                  <button onClick={() => onDelete(event.id)} disabled={deletingId === event.id}
+                    style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, letterSpacing: '0.05em', color: '#CC2222', background: 'none', border: '1px solid rgba(204,34,34,0.3)', padding: '6px 12px', cursor: 'pointer', opacity: deletingId === event.id ? 0.5 : 1 }}>
                     {deletingId === event.id ? '…' : 'Delete'}
                   </button>
                 </div>
@@ -612,32 +591,32 @@ function EventsTab({ events, orders, isAdmin, deletingId, onEdit, onDelete }) {
 /* ── Orders ── */
 function OrdersTab({ orders, isAdmin }) {
   if (orders.length === 0) {
-    return <p className="text-gray-400 text-sm py-12 text-center">No orders yet.</p>;
+    return <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.25)', fontSize: 14, padding: '48px 0', textAlign: 'center' }}>No orders yet.</p>;
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-      <table className="w-full text-sm">
+    <div style={{ background: '#111111', border: '1px solid #222222', overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
-          <tr className="border-b border-gray-100 bg-gray-50">
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Buyer</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Event</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Qty</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Total</th>
-            <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Date</th>
+          <tr style={{ background: '#0d0d0d' }}>
+            <th style={thCell}>Buyer</th>
+            <th style={thCell}>Event</th>
+            <th style={thCell}>Qty</th>
+            <th style={thCell}>Total</th>
+            <th style={thCell}>Date</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody>
           {orders.map((order) => (
-            <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-              <td className="px-6 py-4">
-                <p className="font-medium text-gray-900">{order.buyer_name}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{order.buyer_email}</p>
+            <tr key={order.id}>
+              <td style={tdCell}>
+                <p style={{ color: '#ffffff', marginBottom: 2 }}>{order.buyer_name}</p>
+                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>{order.buyer_email}</p>
               </td>
-              <td className="px-6 py-4 text-gray-600">{order.events?.title ?? '—'}</td>
-              <td className="px-6 py-4 text-gray-600">{order.quantity}</td>
-              <td className="px-6 py-4 font-semibold text-gray-900">{fmtOrderPrice(order.total_price, order.events?.currency)}</td>
-              <td className="px-6 py-4 text-gray-400 text-xs">
+              <td style={tdCell}>{order.events?.title ?? '—'}</td>
+              <td style={tdCell}>{order.quantity}</td>
+              <td style={{ ...tdCell, color: '#CC2222', fontFamily: 'ActayWide, sans-serif', fontStyle: 'italic' }}>{fmtOrderPrice(order.total_price, order.events?.currency)}</td>
+              <td style={{ ...tdCell, fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
                 {new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </td>
             </tr>

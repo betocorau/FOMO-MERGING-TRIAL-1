@@ -27,10 +27,12 @@ function formatPhone(n) {
   return d.length === 8 ? `${d.slice(0, 4)}-${d.slice(4)}` : n;
 }
 
+const label = { fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6, display: 'block' };
+
 export default function CheckoutForm({ event, selectedTier }) {
   const [form, setForm] = useState(emptyForm);
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [step, setStep] = useState('info'); // info | payment | sinpe-pending | success
+  const [step, setStep] = useState('info');
   const [errorMsg, setErrorMsg] = useState('');
   const [paymentProcessing, setPaymentProcessing] = useState(false);
 
@@ -88,7 +90,6 @@ export default function CheckoutForm({ event, selectedTier }) {
     });
   }, []);
 
-  // Generate QR when payment step is shown
   useEffect(() => {
     if (step !== 'payment' || qrDataUrl) return;
     import('qrcode').then((QRCode) => {
@@ -122,7 +123,6 @@ export default function CheckoutForm({ event, selectedTier }) {
     }
   }
 
-  // Creates Supabase order + sends ticket — for free tickets only
   const completeOrder = useCallback(async () => {
     const { data: order, error: orderError } = await supabase
       .from('orders')
@@ -198,7 +198,6 @@ export default function CheckoutForm({ event, selectedTier }) {
     }
   }
 
-  // ── SINPE submit ──────────────────────────────────────────────────────────
   async function handleSinpeSubmit() {
     setPaymentProcessing(true);
     setErrorMsg('');
@@ -239,50 +238,50 @@ export default function CheckoutForm({ event, selectedTier }) {
     }
   }
 
-  // ── SINPE PENDING ─────────────────────────────────────────────────────────
+  /* ── SINPE PENDING ── */
   if (step === 'sinpe-pending') {
     return (
-      <div className="text-center py-4 space-y-3">
-        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto">
-          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div style={{ textAlign: 'center', padding: '16px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(59,130,246,0.12)', border: '2px solid rgba(59,130,246,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="20" height="20" fill="none" stroke="#60a5fa" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-gray-900 font-semibold">Payment submitted!</p>
-        <p className="text-sm text-gray-500">
-          We'll confirm your SINPE transfer and send your ticket to{' '}
-          <span className="font-medium">{form.email}</span> shortly.
+        <p style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 18 }}>Payment submitted!</p>
+        <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 1.6 }}>
+          We&apos;ll confirm your SINPE transfer and send your ticket to{' '}
+          <strong style={{ color: '#ffffff' }}>{form.email}</strong> shortly.
         </p>
-        <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg">
-          <span className="text-xs text-blue-600">Reference:</span>
-          <span className="font-mono font-bold text-blue-800">{sinpeRef}</span>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.25)', padding: '8px 16px' }}>
+          <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(96,165,250,0.8)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Reference:</span>
+          <span style={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#93c5fd', fontSize: 14 }}>{sinpeRef}</span>
         </div>
-        <p className="text-xs text-gray-400">Keep this reference in case you need to follow up.</p>
+        <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.04em' }}>Keep this reference in case you need to follow up.</p>
       </div>
     );
   }
 
-  // ── SUCCESS ───────────────────────────────────────────────────────────────
+  /* ── SUCCESS ── */
   if (step === 'success') {
     return (
-      <div className="text-center py-4">
-        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-          <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div style={{ textAlign: 'center', padding: '16px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(74,222,128,0.1)', border: '2px solid rgba(74,222,128,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="20" height="20" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <p className="text-gray-900 font-semibold">You&apos;re registered!</p>
-        {selectedTier && <p className="text-sm text-gray-500 mt-0.5">{selectedTier.name} ticket</p>}
-        <p className="text-gray-500 text-sm mt-1">
-          Your ticket is on its way to <span className="font-medium">{form.email}</span>.
+        <p style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 18 }}>You&apos;re registered!</p>
+        {selectedTier && <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>{selectedTier.name} ticket</p>}
+        <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 1.6 }}>
+          Your ticket is on its way to <strong style={{ color: '#ffffff' }}>{form.email}</strong>.
         </p>
         {loggedInUser ? (
-          <Link href="/my-tickets" className="mt-4 inline-block text-sm font-medium text-gray-900 hover:underline">
+          <Link href="/my-tickets" style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#CC2222', textDecoration: 'none', marginTop: 4 }}>
             View my tickets →
           </Link>
         ) : (
-          <p className="mt-4 text-xs text-gray-400">
-            <Link href="/signup" className="text-gray-700 font-medium hover:underline">Create an account</Link>
+          <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
+            <Link href="/signup" style={{ color: '#CC2222', textDecoration: 'none' }}>Create an account</Link>
             {' '}to view your tickets anytime.
           </p>
         )}
@@ -290,166 +289,124 @@ export default function CheckoutForm({ event, selectedTier }) {
     );
   }
 
-  // ── PAYMENT STEP ──────────────────────────────────────────────────────────
+  /* ── PAYMENT STEP ── */
   if (step === 'payment') {
     return (
-      <div className="space-y-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {/* Order summary */}
-        <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 space-y-1">
-          <p className="text-sm font-semibold text-gray-800">Order summary</p>
-          <div className="flex justify-between text-sm text-gray-500">
+        <div style={{ background: '#0d0d0d', border: '1px solid #333333', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>Order summary</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
             <span>{form.firstName} {form.lastName} · {form.quantity} ticket{form.quantity > 1 ? 's' : ''}</span>
             <span>{fmtAmt(baseTotal)}</span>
           </div>
           {appliedDiscount && (
-            <div className="flex justify-between text-sm text-green-600">
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#4ade80' }}>
               <span>Discount ({appliedDiscount.code})</span>
               <span>−{fmtAmt(discountAmount)}</span>
             </div>
           )}
-          <div className="flex justify-between text-sm font-semibold text-gray-900 border-t border-gray-200 pt-1 mt-1">
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', fontSize: 16, color: '#ffffff', borderTop: '1px solid #222222', paddingTop: 8, marginTop: 4 }}>
             <span>Total</span>
             <span>{fmtAmt(finalTotal)}</span>
           </div>
         </div>
 
         {errorMsg && (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div style={{ background: 'rgba(204,34,34,0.1)', border: '1px solid rgba(204,34,34,0.3)', padding: '12px 16px', fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#CC2222' }}>
             {errorMsg}
           </div>
         )}
 
-        {/* SINPE Móvil */}
-        <div className="space-y-4">
-            <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">SINPE Móvil</span>
-                {qrDataUrl && (
-                  <img src={qrDataUrl} alt="QR SINPE" className="w-16 h-16 rounded" />
-                )}
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-blue-700">Número</span>
-                  <span className="font-mono font-bold text-blue-900 text-lg">{formatPhone(sinpeNumber)}</span>
-                </div>
-                <div className="flex justify-between items-start">
-                  <span className="text-sm text-blue-700">Monto exacto</span>
-                  <div className="text-right">
-                    <span className="font-bold text-blue-900 text-lg">₡{crcAmount.toLocaleString('es-CR')}</span>
-                    {!isCRC && (
-                      <p className="text-xs text-blue-500 mt-0.5">= ${finalTotal.toFixed(2)} USD</p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-blue-700">Referencia</span>
-                  <span className="font-mono font-bold text-blue-900">{sinpeRef}</span>
-                </div>
-              </div>
+        {/* SINPE */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ border: '1px solid rgba(59,130,246,0.3)', background: 'rgba(59,130,246,0.05)', padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: '#60a5fa', letterSpacing: '0.12em', textTransform: 'uppercase' }}>SINPE Móvil</span>
+              {qrDataUrl && <img src={qrDataUrl} alt="QR SINPE" style={{ width: 64, height: 64 }} />}
             </div>
-
-            <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 space-y-1.5 text-sm text-amber-800">
-              <p className="font-semibold text-amber-900 mb-1">Instrucciones</p>
-              <p>1. Abre SINPE Móvil en tu teléfono</p>
-              <p>2. Transfiere <strong>₡{crcAmount.toLocaleString('es-CR')}</strong>{!isCRC && ` (= $${finalTotal.toFixed(2)} USD)`} al número <strong>{formatPhone(sinpeNumber)}</strong></p>
-              <p>3. Escribe <strong>{sinpeRef}</strong> en el campo de descripción/referencia</p>
-              <p>4. Haz clic en &quot;Ya pagué&quot;</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {[
+                ['Número', <span key="num" style={{ fontFamily: 'monospace', fontWeight: 'bold', fontSize: 18, color: '#93c5fd' }}>{formatPhone(sinpeNumber)}</span>],
+                ['Monto exacto', <div key="amt" style={{ textAlign: 'right' }}><span style={{ fontWeight: 'bold', fontSize: 18, color: '#93c5fd' }}>₡{crcAmount.toLocaleString('es-CR')}</span>{!isCRC && <p style={{ fontSize: 11, color: 'rgba(147,197,253,0.6)', marginTop: 2 }}>= ${finalTotal.toFixed(2)} USD</p>}</div>],
+                ['Referencia', <span key="ref" style={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#93c5fd' }}>{sinpeRef}</span>],
+              ].map(([k, v]) => (
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(147,197,253,0.7)' }}>{k}</span>
+                  {v}
+                </div>
+              ))}
             </div>
+          </div>
 
-            <button
-              type="button"
-              onClick={handleSinpeSubmit}
-              disabled={paymentProcessing}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors"
-            >
-              {paymentProcessing ? 'Enviando…' : 'Ya pagué — enviar comprobante'}
-            </button>
-            <p className="text-xs text-center text-gray-400">
-              Tu entrada llegará por email una vez confirmemos la transferencia.
-            </p>
+          <div style={{ border: '1px solid rgba(251,191,36,0.3)', background: 'rgba(251,191,36,0.05)', padding: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(251,191,36,0.8)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 6 }}>Instrucciones</p>
+            {[
+              'Abre SINPE Móvil en tu teléfono',
+              `Transfiere ₡${crcAmount.toLocaleString('es-CR')}${!isCRC ? ` (= $${finalTotal.toFixed(2)} USD)` : ''} al número ${formatPhone(sinpeNumber)}`,
+              `Escribe ${sinpeRef} en el campo de descripción/referencia`,
+              'Haz clic en "Ya pagué"',
+            ].map((s, i) => (
+              <p key={i} style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(251,191,36,0.7)' }}>{i + 1}. {s}</p>
+            ))}
+          </div>
+
+          <button type="button" onClick={handleSinpeSubmit} disabled={paymentProcessing} className="fomo-btn-primary" style={{ width: '100%' }}>
+            {paymentProcessing ? 'Enviando…' : 'Ya pagué — enviar comprobante'}
+          </button>
+          <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.25)', textAlign: 'center', letterSpacing: '0.04em' }}>
+            Tu entrada llegará por email una vez confirmemos la transferencia.
+          </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => { setStep('info'); setErrorMsg(''); }}
-          className="w-full text-sm text-gray-500 hover:text-gray-700 text-center"
-        >
+        <button type="button" onClick={() => { setStep('info'); setErrorMsg(''); }}
+          style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.35)', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'center' }}>
           ← Back
         </button>
       </div>
     );
   }
 
-  // ── INFO STEP ─────────────────────────────────────────────────────────────
+  /* ── INFO STEP ── */
   return (
-    <form onSubmit={handleInfoSubmit} className="space-y-4">
+    <form onSubmit={handleInfoSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {!loggedInUser && (
-        <div className="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-600 flex items-center gap-2">
-          <svg className="w-4 h-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          <span>
-            <Link href={`/login?redirect=${encodeURIComponent(`/events/${event.id}`)}`} className="font-medium text-gray-900 hover:underline">Sign in</Link>
-            {' '}to save your tickets to your profile.
-          </span>
+        <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid #333333', padding: '10px 14px', fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Link href={`/login?redirect=${encodeURIComponent(`/events/${event.id}`)}`} style={{ color: '#CC2222', textDecoration: 'none' }}>Sign in</Link>
+          {' '}to save your tickets to your profile.
         </div>
       )}
-
       {loggedInUser && (
-        <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 flex items-center gap-2">
-          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          Signed in — your ticket will be saved to your account.
+        <div style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.2)', padding: '10px 14px', fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#4ade80', display: 'flex', alignItems: 'center', gap: 8 }}>
+          ✓ Signed in — your ticket will be saved to your account.
         </div>
       )}
 
       {errorMsg && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div style={{ background: 'rgba(204,34,34,0.1)', border: '1px solid rgba(204,34,34,0.3)', padding: '10px 14px', fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#CC2222' }}>
           {errorMsg}
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-700">First Name</label>
-          <input type="text" name="firstName" value={form.firstName} onChange={handleChange} placeholder="Jane" required className="input" />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-700">Last Name</label>
-          <input type="text" name="lastName" value={form.lastName} onChange={handleChange} placeholder="Smith" required className="input" />
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        <div><label style={label}>First Name</label><input type="text" name="firstName" value={form.firstName} onChange={handleChange} placeholder="Jane" required className="input" /></div>
+        <div><label style={label}>Last Name</label><input type="text" name="lastName" value={form.lastName} onChange={handleChange} placeholder="Smith" required className="input" /></div>
       </div>
 
       {requireId && (
-        <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-gray-700">ID Number (Cédula)</label>
-          <input type="text" name="idNumber" value={form.idNumber} onChange={handleChange} placeholder="0000000000" required className="input" />
-        </div>
+        <div><label style={label}>ID Number (Cédula)</label><input type="text" name="idNumber" value={form.idNumber} onChange={handleChange} placeholder="0000000000" required className="input" /></div>
       )}
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-700">Email</label>
-        <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="jane@example.com" required className="input" />
+      <div><label style={label}>Email</label><input type="email" name="email" value={form.email} onChange={handleChange} placeholder="jane@example.com" required className="input" /></div>
+
+      <div>
+        <label style={label}>Confirm Email</label>
+        <input type="email" name="confirmEmail" value={form.confirmEmail} onChange={handleChange} placeholder="jane@example.com" required className="input" style={{ borderColor: emailMismatch ? '#CC2222' : undefined }} />
+        {emailMismatch && <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: '#CC2222', marginTop: 4 }}>Email addresses do not match.</p>}
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-700">Confirm Email</label>
-        <input
-          type="email"
-          name="confirmEmail"
-          value={form.confirmEmail}
-          onChange={handleChange}
-          placeholder="jane@example.com"
-          required
-          className={`input ${emailMismatch ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-        />
-        {emailMismatch && <p className="text-xs text-red-500">Email addresses do not match.</p>}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-700">Quantity</label>
+      <div>
+        <label style={label}>Quantity</label>
         <select name="quantity" value={form.quantity} onChange={handleChange} className="input">
           {Array.from({ length: Math.min(10, maxQty) }, (_, i) => i + 1).map((n) => (
             <option key={n} value={n}>{n}</option>
@@ -458,61 +415,55 @@ export default function CheckoutForm({ event, selectedTier }) {
       </div>
 
       {/* Discount code */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-gray-700">Discount Code</label>
-        <div className="flex gap-2">
+      <div>
+        <label style={label}>Discount Code</label>
+        <div style={{ display: 'flex', gap: 8 }}>
           <input
             type="text"
             value={discountInput}
-            onChange={(e) => {
-              setDiscountInput(e.target.value.toUpperCase());
-              if (appliedDiscount) { setAppliedDiscount(null); setDiscountStatus(null); }
-            }}
+            onChange={(e) => { setDiscountInput(e.target.value.toUpperCase()); if (appliedDiscount) { setAppliedDiscount(null); setDiscountStatus(null); } }}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyDiscount(); } }}
             placeholder="Enter code"
-            className="input flex-1 font-mono uppercase"
+            className="input"
+            style={{ flex: 1, fontFamily: 'monospace', textTransform: 'uppercase' }}
             disabled={!!appliedDiscount}
           />
           <button
             type="button"
             onClick={appliedDiscount ? () => { setAppliedDiscount(null); setDiscountStatus(null); setDiscountInput(''); } : applyDiscount}
             disabled={discountStatus === 'loading'}
-            className="text-sm font-medium px-3 py-2 border border-gray-200 rounded-lg hover:border-gray-300 text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap disabled:opacity-50"
+            style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, letterSpacing: '0.06em', color: 'rgba(255,255,255,0.5)', background: 'none', border: '1px solid #444444', padding: '0 14px', cursor: 'pointer', flexShrink: 0, opacity: discountStatus === 'loading' ? 0.5 : 1 }}
           >
             {discountStatus === 'loading' ? '…' : appliedDiscount ? 'Remove' : 'Apply'}
           </button>
         </div>
         {discountStatus === 'valid' && appliedDiscount && (
-          <p className="text-xs text-green-600 font-medium">
+          <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: '#4ade80', marginTop: 4 }}>
             ✓ {appliedDiscount.type === 'percentage' ? `${appliedDiscount.value}%` : fmtAmt(appliedDiscount.value)} off applied — you save {fmtAmt(appliedDiscount.amount)}
           </p>
         )}
-        {discountStatus === 'invalid' && <p className="text-xs text-red-500">{discountError}</p>}
+        {discountStatus === 'invalid' && <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: '#CC2222', marginTop: 4 }}>{discountError}</p>}
       </div>
 
       {/* Totals */}
-      <div className="border-t border-gray-100 pt-4 space-y-1.5">
-        <div className="flex justify-between text-sm text-gray-500">
+      <div style={{ borderTop: '1px solid #222222', paddingTop: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)' }}>
           <span>{fmtAmt(price)} × {form.quantity}</span>
           <span>{fmtAmt(baseTotal)}</span>
         </div>
         {appliedDiscount && (
-          <div className="flex justify-between text-sm text-green-600">
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#4ade80' }}>
             <span>Discount ({appliedDiscount.code})</span>
             <span>−{fmtAmt(discountAmount)}</span>
           </div>
         )}
-        <div className="flex justify-between text-sm font-semibold text-gray-900">
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', fontSize: 18, color: '#ffffff' }}>
           <span>Total</span>
           <span>{isFree ? 'Free' : fmtAmt(finalTotal)}</span>
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={paymentProcessing || emailMismatch}
-        className="w-full bg-gray-900 hover:bg-gray-700 disabled:bg-gray-400 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors"
-      >
+      <button type="submit" disabled={paymentProcessing || emailMismatch} className="fomo-btn-primary" style={{ width: '100%' }}>
         {paymentProcessing ? 'Processing…' : isFree ? 'Register for Free' : 'Continue to Payment →'}
       </button>
     </form>

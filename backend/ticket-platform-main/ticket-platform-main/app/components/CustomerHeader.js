@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -25,40 +26,75 @@ export default function CustomerHeader({ backLink }) {
   }
 
   return (
-    <header className="bg-white border-b border-gray-200">
-      <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">FOMO</Link>
-        <div className="flex items-center gap-4">
+    <header style={{ background: '#000000', borderBottom: '1px solid #222222' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+
+        {/* Logo */}
+        <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <Image
+            src="/images/FOMO-LOGO-Vector.svg"
+            alt="FOMO"
+            width={80}
+            height={28}
+            priority
+            style={{ height: 28, width: 'auto' }}
+          />
+        </Link>
+
+        {/* Nav */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
           {backLink && (
-            <Link href={backLink.href} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+            <Link
+              href={backLink.href}
+              style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em', textDecoration: 'none', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.target.style.color = '#ffffff'}
+              onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.5)'}
+            >
               {backLink.label}
             </Link>
           )}
+
           {ready && (
             user ? (
               <>
-                <Link href="/my-tickets" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
+                <Link
+                  href="/my-tickets"
+                  style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.7)', letterSpacing: '0.05em', textDecoration: 'none' }}
+                >
                   My Tickets
                 </Link>
-                <button onClick={handleSignOut} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                <button
+                  onClick={handleSignOut}
+                  style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}
+                >
                   Sign out
                 </button>
               </>
             ) : (
               <>
-                <Link href="/login" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                <Link
+                  href="/login"
+                  style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.05em', textDecoration: 'none' }}
+                >
                   Sign in
                 </Link>
-                <Link href="/signup" className="text-sm font-medium bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                <Link
+                  href="/signup"
+                  style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, background: '#CC2222', color: '#ffffff', padding: '10px 22px', borderRadius: 100, letterSpacing: '0.05em', textDecoration: 'none', transition: 'background 0.2s' }}
+                >
                   Sign up
                 </Link>
               </>
             )
           )}
-          <Link href="/admin" className="text-sm text-gray-400 hover:text-gray-700 transition-colors">
+
+          <Link
+            href="/admin"
+            style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }}
+          >
             Admin
           </Link>
-        </div>
+        </nav>
       </div>
     </header>
   );

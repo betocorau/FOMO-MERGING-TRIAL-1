@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import CheckoutForm from './CheckoutForm';
 import TierSelector from './TierSelector';
 import CustomerHeader from '@/app/components/CustomerHeader';
@@ -63,92 +62,78 @@ export default async function EventPage({ params }) {
     : event.tickets_remaining === 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ minHeight: '100vh', background: '#000000', display: 'flex', flexDirection: 'column' }}>
       <CustomerHeader backLink={{ href: '/', label: '← All Events' }} />
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <main style={{ flex: 1, width: '90%', maxWidth: 1080, margin: '0 auto', padding: '48px 0 80px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 40 }}>
 
-          {/* Event Info */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Title block */}
-            <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 bg-gray-100 rounded-full px-3 py-1 mb-4">
-                <CalendarIcon />
+          {/* Info column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+
+            {/* Date badge */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#111111', border: '1px solid #333333', padding: '8px 16px', alignSelf: 'flex-start' }}>
+              <CalendarIcon />
+              <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.05em' }}>
                 {formatDate(event.date)} · {formatTime(event.date)}
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight">
-                {event.title}
-              </h1>
+              </span>
             </div>
+
+            {/* Title */}
+            <h1 style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 'clamp(28px, 5vw, 56px)', lineHeight: 1, margin: 0 }}>
+              {event.title}
+            </h1>
 
             {/* Meta */}
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 text-gray-600">
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                  <LocationIcon />
-                </div>
-                <span className="text-sm">{event.location}</span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600">
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                  <TicketIcon />
-                </div>
-                <span className="text-sm">
-                  {isSoldOut ? (
-                    <span className="text-red-500 font-medium">Sold out</span>
-                  ) : event.show_tickets_remaining !== false ? (
-                    <>{event.tickets_remaining} of {event.total_tickets} tickets remaining</>
-                  ) : (
-                    'Tickets available'
-                  )}
-                </span>
-              </div>
-              <div className="flex items-center gap-3 text-gray-600">
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                  <PriceIcon />
-                </div>
-                <span className="text-sm font-semibold text-gray-900">
-                  {event.price === 0 || event.price === '0.00'
-                    ? 'Free'
-                    : `${fmtPrice(event.price, event.currency)} per ticket`}
-                </span>
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <MetaRow icon={<LocationIcon />} text={event.location} />
+              <MetaRow icon={<TicketIcon />} text={
+                isSoldOut ? <span style={{ color: '#CC2222' }}>Sold out</span>
+                : event.show_tickets_remaining !== false
+                  ? `${event.tickets_remaining} of ${event.total_tickets} tickets remaining`
+                  : 'Tickets available'
+              } />
+              <MetaRow icon={<PriceIcon />} text={
+                <strong style={{ color: '#ffffff' }}>
+                  {event.price === 0 || event.price === '0.00' ? 'Free' : `${fmtPrice(event.price, event.currency)} per ticket`}
+                </strong>
+              } />
             </div>
 
-            {/* Divider */}
-            <div className="border-t border-gray-200" />
+            <div style={{ borderTop: '1px solid #222222' }} />
 
             {/* Description */}
             {event.description && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">About this event</h2>
-                <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                <h2 style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 20, marginBottom: 12 }}>
+                  About this event
+                </h2>
+                <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, whiteSpace: 'pre-line', fontSize: 15 }}>
                   {event.description}
                 </p>
               </div>
             )}
           </div>
 
-          {/* Checkout Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sticky top-6">
+          {/* Checkout card */}
+          <div>
+            <div style={{ background: '#111111', border: '3px solid #ffffff', padding: 24, position: 'sticky', top: 24 }}>
               {hasTiers ? (
                 <TierSelector event={event} tiers={tiers} />
               ) : (
                 <>
-                  <div className="flex items-baseline justify-between mb-6">
-                    <span className="text-2xl font-bold text-gray-900">
+                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 24 }}>
+                    <span style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', fontSize: 32, color: '#ffffff' }}>
                       {fmtPrice(event.price, event.currency)}
                     </span>
                     {event.price > 0 && (
-                      <span className="text-sm text-gray-400">per ticket</span>
+                      <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.05em' }}>per ticket</span>
                     )}
                   </div>
                   {isSoldOut ? (
-                    <div className="text-center py-6">
-                      <p className="text-red-500 font-semibold text-lg">Sold Out</p>
-                      <p className="text-gray-400 text-sm mt-1">No tickets available</p>
+                    <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                      <p style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#CC2222', fontSize: 20 }}>Sold Out</p>
+                      <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.35)', fontSize: 13, marginTop: 4 }}>No tickets available</p>
                     </div>
                   ) : (
                     <CheckoutForm event={event} />
@@ -164,9 +149,20 @@ export default async function EventPage({ params }) {
   );
 }
 
+function MetaRow({ icon, text }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ width: 32, height: 32, background: '#111111', border: '1px solid #333333', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {icon}
+      </div>
+      <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>{text}</span>
+    </div>
+  );
+}
+
 function CalendarIcon() {
   return (
-    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,0.5)" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
     </svg>
   );
@@ -174,7 +170,7 @@ function CalendarIcon() {
 
 function LocationIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,0.5)" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
@@ -183,7 +179,7 @@ function LocationIcon() {
 
 function TicketIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,0.5)" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
     </svg>
   );
@@ -191,7 +187,7 @@ function TicketIcon() {
 
 function PriceIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,0.5)" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   );

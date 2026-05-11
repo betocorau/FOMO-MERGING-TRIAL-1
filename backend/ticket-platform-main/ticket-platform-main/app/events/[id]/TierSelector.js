@@ -3,15 +3,6 @@
 import { useState, useEffect } from 'react';
 import CheckoutForm from './CheckoutForm';
 
-const COLOR = {
-  gray:   { top: 'bg-gray-900',    badge: 'bg-gray-100 text-gray-800 border-gray-200',     ring: 'ring-2 ring-gray-400',    btn: 'bg-gray-900 hover:bg-gray-700' },
-  blue:   { top: 'bg-blue-600',    badge: 'bg-blue-50 text-blue-700 border-blue-200',       ring: 'ring-2 ring-blue-400',    btn: 'bg-blue-600 hover:bg-blue-700' },
-  purple: { top: 'bg-purple-600',  badge: 'bg-purple-50 text-purple-700 border-purple-200', ring: 'ring-2 ring-purple-500',  btn: 'bg-purple-600 hover:bg-purple-700' },
-  green:  { top: 'bg-green-600',   badge: 'bg-green-50 text-green-700 border-green-200',    ring: 'ring-2 ring-green-400',   btn: 'bg-green-600 hover:bg-green-700' },
-  amber:  { top: 'bg-amber-500',   badge: 'bg-amber-50 text-amber-700 border-amber-200',    ring: 'ring-2 ring-amber-400',   btn: 'bg-amber-500 hover:bg-amber-600' },
-  rose:   { top: 'bg-rose-600',    badge: 'bg-rose-50 text-rose-700 border-rose-200',       ring: 'ring-2 ring-rose-400',    btn: 'bg-rose-600 hover:bg-rose-700' },
-};
-
 function getTimeLeft(deadline) {
   const diff = new Date(deadline) - Date.now();
   if (diff <= 0) return null;
@@ -38,10 +29,10 @@ function Countdown({ deadline }) {
     return () => clearInterval(id);
   }, [deadline]);
 
-  if (!timeLeft) return <span className="text-red-500">Ended</span>;
+  if (!timeLeft) return <span style={{ color: '#CC2222' }}>Ended</span>;
   const { days, hours, minutes, seconds } = timeLeft;
   return (
-    <span className="font-mono tabular-nums">
+    <span style={{ fontFamily: 'monospace', fontVariantNumeric: 'tabular-nums' }}>
       {days > 0 && `${days}d `}{String(hours).padStart(2, '0')}h {String(minutes).padStart(2, '0')}m {String(seconds).padStart(2, '0')}s
     </span>
   );
@@ -62,19 +53,18 @@ export default function TierSelector({ event, tiers }) {
 
   if (allSoldOut) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500 font-semibold text-lg">Sold Out</p>
-        <p className="text-gray-400 text-sm mt-1">All ticket tiers are sold out.</p>
+      <div style={{ textAlign: 'center', padding: '32px 0' }}>
+        <p style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#CC2222', fontSize: 20 }}>Sold Out</p>
+        <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.35)', fontSize: 13, marginTop: 4 }}>All ticket tiers are sold out.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Select a Tier</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>Select a Tier</p>
 
       {tiers.map((tier) => {
-        const c = COLOR[tier.color] ?? COLOR.gray;
         const isSoldOut = tier.quantity_remaining === 0;
         const isSelected = selectedTier?.id === tier.id;
         const isEarlyBird = checkEarlyBird(tier);
@@ -87,45 +77,51 @@ export default function TierSelector({ event, tiers }) {
         return (
           <div
             key={tier.id}
-            className={`rounded-2xl border overflow-hidden transition-all ${
-              isSelected ? `border-transparent ${c.ring}` : 'border-gray-200'
-            } ${isSoldOut ? 'opacity-50' : 'cursor-pointer hover:border-gray-300'}`}
             onClick={() => !isSoldOut && setSelectedTier(isSelected ? null : {
               ...tier,
               effective_price: displayPrice,
               is_early_bird: isEarlyBird,
             })}
+            style={{
+              border: isSelected ? '2px solid #CC2222' : '2px solid #333333',
+              background: isSelected ? 'rgba(204,34,34,0.06)' : '#0d0d0d',
+              cursor: isSoldOut ? 'default' : 'pointer',
+              opacity: isSoldOut ? 0.45 : 1,
+              transition: 'border-color 0.15s, background 0.15s',
+            }}
           >
-            <div className={`h-1.5 ${c.top}`} />
-            <div className="p-4">
-              <div className="flex items-start justify-between gap-3 mb-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${c.badge}`}>
+            {/* Color stripe */}
+            <div style={{ height: 3, background: isSelected ? '#CC2222' : '#333333' }} />
+
+            <div style={{ padding: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 14 }}>
                     {tier.name}
                   </span>
                   {isEarlyBird && (
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                    <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#fbbf24', background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)', padding: '2px 8px' }}>
                       ⚡ Early Bird
                     </span>
                   )}
                   {isSoldOut && (
-                    <span className="text-xs font-medium text-red-500 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
+                    <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#CC2222', background: 'rgba(204,34,34,0.1)', border: '1px solid rgba(204,34,34,0.3)', padding: '2px 8px' }}>
                       Sold Out
                     </span>
                   )}
                 </div>
-                <div className="text-right shrink-0">
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
                   {isEarlyBird ? (
                     <>
-                      <span className="text-xl font-bold text-gray-900">
+                      <span style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 22, display: 'block' }}>
                         {fmtTierPrice(tier.early_bird_price, currency)}
                       </span>
-                      <span className="block text-xs text-gray-400 line-through">
+                      <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.25)', textDecoration: 'line-through', display: 'block' }}>
                         {fmtTierPrice(tier.price, currency)}
                       </span>
                     </>
                   ) : (
-                    <span className="text-xl font-bold text-gray-900">
+                    <span style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 22 }}>
                       {fmtTierPrice(tier.price, currency)}
                     </span>
                   )}
@@ -133,22 +129,21 @@ export default function TierSelector({ event, tiers }) {
               </div>
 
               {tier.description && (
-                <p className="text-sm text-gray-500 mb-2">{tier.description}</p>
+                <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 8, lineHeight: 1.5 }}>{tier.description}</p>
               )}
 
-              {/* Early bird countdown */}
               {isEarlyBird && tier.early_bird_deadline && (
-                <div className="mb-2 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 flex items-center justify-between gap-2">
+                <div style={{ marginBottom: 8, fontFamily: 'Actay, sans-serif', fontSize: 12, color: '#fbbf24', background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.2)', padding: '6px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                   <span>Ends in</span>
                   <Countdown deadline={tier.early_bird_deadline} />
                 </div>
               )}
 
               {benefits.length > 0 && (
-                <ul className="space-y-1 mb-3">
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 12, listStyle: 'none', padding: 0 }}>
                   {benefits.map((b, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
-                      <svg className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-gray-900' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.55)' }}>
+                      <svg width="12" height="12" fill="none" stroke={isSelected ? '#CC2222' : 'rgba(255,255,255,0.3)'} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                       </svg>
                       {b}
@@ -157,8 +152,8 @@ export default function TierSelector({ event, tiers }) {
                 </ul>
               )}
 
-              <div className="flex items-center justify-between text-xs text-gray-400">
-                <span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.04em' }}>
                   {(() => {
                     if (isSoldOut) return 'No tickets left';
                     const showCount = tier.show_tickets_remaining ?? event.show_tickets_remaining ?? true;
@@ -168,7 +163,7 @@ export default function TierSelector({ event, tiers }) {
                   })()}
                 </span>
                 {!isSoldOut && (
-                  <span className={`font-medium px-3 py-1 rounded-lg text-white text-xs ${c.btn} transition-colors`}>
+                  <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? '#CC2222' : 'rgba(255,255,255,0.4)', border: `1px solid ${isSelected ? '#CC2222' : '#444444'}`, padding: '5px 12px' }}>
                     {isSelected ? '✓ Selected' : 'Select'}
                   </span>
                 )}
@@ -179,7 +174,7 @@ export default function TierSelector({ event, tiers }) {
       })}
 
       {selectedTier && (
-        <div className="pt-4 border-t border-gray-100">
+        <div style={{ paddingTop: 16, borderTop: '1px solid #222222' }}>
           <CheckoutForm event={event} selectedTier={selectedTier} />
         </div>
       )}

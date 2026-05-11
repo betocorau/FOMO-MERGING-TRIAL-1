@@ -1,31 +1,125 @@
 @import "tailwindcss";
 
+/* ── FOMO Fonts ─────────────────────────────────────── */
+@font-face {
+  font-family: 'Actay';
+  src: url('/fonts/Actay-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ActayWide';
+  src: url('/fonts/ActayWide-BoldItalic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ── FOMO Design Tokens ─────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --fomo-black: #000000;
+  --fomo-white: #ffffff;
+  --fomo-red: #CC2222;
+  --fomo-red-dark: #aa1818;
+  --fomo-gray-dark: #111111;
+  --fomo-gray-mid: #222222;
+  --fomo-gray-border: #444444;
+  --fomo-gray-label: #888888;
+  --fomo-gray-sub: #555555;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Reset & Base ───────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background: var(--fomo-black);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Actay', sans-serif;
+  background: var(--fomo-black);
+  color: var(--fomo-white);
+  overflow-x: hidden;
 }
 
-/* Hide default html5-qrcode UI chrome */
+/* ── Input component (used across pages) ───────────── */
+@layer components {
+  .input {
+    @apply w-full border bg-[#222222] border-[#444444] px-4 py-3 text-sm text-white placeholder-[#555555] outline-none transition;
+    border-radius: 0;
+    font-family: 'Actay', sans-serif;
+  }
+  .input:focus {
+    border-color: var(--fomo-red);
+  }
+
+  .fomo-btn-primary {
+    background: var(--fomo-red);
+    color: var(--fomo-white);
+    border: none;
+    border-radius: 100px;
+    font-family: 'Actay', sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    min-height: 48px;
+  }
+  .fomo-btn-primary:hover {
+    background: var(--fomo-red-dark);
+  }
+  .fomo-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .fomo-btn-secondary {
+    background: var(--fomo-black);
+    color: var(--fomo-white);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 100px;
+    font-family: 'Actay', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+    min-height: 44px;
+  }
+  .fomo-btn-secondary:hover {
+    border-color: rgba(255,255,255,0.6);
+    color: var(--fomo-white);
+  }
+
+  .fomo-label {
+    font-family: 'Actay', sans-serif;
+    font-size: 11px;
+    color: var(--fomo-gray-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .fomo-heading {
+    font-family: 'ActayWide', sans-serif;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--fomo-white);
+    line-height: 1;
+  }
+
+  .fomo-card {
+    background: var(--fomo-gray-dark);
+    border: 3px solid var(--fomo-black);
+  }
+}
+
+/* ── QR reader overrides ────────────────────────────── */
 #qr-reader__header_message,
 #qr-reader__status_span,
 #qr-reader select,
@@ -43,10 +137,4 @@ body {
   height: 100% !important;
   object-fit: cover !important;
   border-radius: 0 !important;
-}
-
-@layer components {
-  .input {
-    @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-gray-900 focus:ring-2 focus:ring-gray-900/10;
-  }
 }

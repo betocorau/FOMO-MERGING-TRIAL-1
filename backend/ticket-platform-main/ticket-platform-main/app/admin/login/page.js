@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'forgot'
+  const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ email: '', password: '', confirmPassword: '' });
   const [status, setStatus] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
@@ -34,191 +36,129 @@ export default function LoginPage() {
     }
 
     if (mode === 'login') {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: form.email,
-        password: form.password,
-      });
-      if (error) {
-        setErrorMsg(error.message);
-        setStatus('error');
-      } else {
-        router.push('/admin');
-        router.refresh();
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email: form.email, password: form.password });
+      if (error) { setErrorMsg(error.message); setStatus('error'); }
+      else { router.push('/admin'); router.refresh(); }
 
     } else if (mode === 'signup') {
       const { error } = await supabase.auth.signUp({
-        email: form.email,
-        password: form.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+        email: form.email, password: form.password,
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
       });
-      if (error) {
-        setErrorMsg(error.message);
-        setStatus('error');
-      } else {
-        setStatus('check-email');
-      }
+      if (error) { setErrorMsg(error.message); setStatus('error'); }
+      else { setStatus('check-email'); }
 
     } else if (mode === 'forgot') {
       const { error } = await supabase.auth.resetPasswordForEmail(form.email, {
         redirectTo: `${window.location.origin}/auth/callback?next=/admin`,
       });
-      if (error) {
-        setErrorMsg(error.message);
-        setStatus('error');
-      } else {
-        setStatus('reset-sent');
-      }
+      if (error) { setErrorMsg(error.message); setStatus('error'); }
+      else { setStatus('reset-sent'); }
     }
   }
 
-  if (status === 'check-email') {
+  if (status === 'check-email' || status === 'reset-sent') {
     return (
-      <ConfirmScreen
-        icon="email"
-        title="Check your email"
-        message={<>We sent a confirmation link to <strong>{form.email}</strong>. Click it to activate your account.</>}
-        onBack={() => switchMode('login')}
-      />
-    );
-  }
-
-  if (status === 'reset-sent') {
-    return (
-      <ConfirmScreen
-        icon="email"
-        title="Reset link sent"
-        message={<>We sent a password reset link to <strong>{form.email}</strong>. Check your inbox.</>}
-        onBack={() => switchMode('login')}
-      />
+      <AdminAuthShell>
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <h2 style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 20 }}>
+            {status === 'reset-sent' ? 'Reset link sent' : 'Check your email'}
+          </h2>
+          <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 1.6 }}>
+            We sent a link to <strong style={{ color: '#ffffff' }}>{form.email}</strong>. Check your inbox.
+          </p>
+          <button onClick={() => switchMode('login')}
+            style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.35)', background: 'none', border: 'none', cursor: 'pointer', marginTop: 8 }}>
+            ← Back to sign in
+          </button>
+        </div>
+      </AdminAuthShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">FOMO</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {mode === 'login' && 'Sign in to your account'}
-            {mode === 'signup' && 'Create an organizer account'}
-            {mode === 'forgot' && 'Reset your password'}
-          </p>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
-          {status === 'error' && (
-            <div className="mb-5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-              {errorMsg}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                required
-                className="input"
-              />
-            </div>
-
-            {mode !== 'forgot' && (
-              <div className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">Password</label>
-                  {mode === 'login' && (
-                    <button
-                      type="button"
-                      onClick={() => switchMode('forgot')}
-                      className="text-xs text-gray-500 hover:text-gray-900 transition-colors"
-                    >
-                      Forgot password?
-                    </button>
-                  )}
-                </div>
-                <input
-                  type="password"
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                  className="input"
-                />
-              </div>
-            )}
-
-            {mode === 'signup' && (
-              <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-gray-700">Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
-                  className={`input ${form.confirmPassword && form.confirmPassword !== form.password ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-                />
-                {form.confirmPassword && form.confirmPassword !== form.password && (
-                  <p className="text-xs text-red-500">Passwords do not match.</p>
-                )}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className="w-full bg-gray-900 hover:bg-gray-700 disabled:bg-gray-400 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors mt-2"
-            >
-              {status === 'loading' ? '…' : mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
-            </button>
-          </form>
-
-          <div className="text-center text-sm text-gray-500 mt-6 space-y-2">
-            {mode === 'login' && (
-              <p>Don't have an account?{' '}
-                <button onClick={() => switchMode('signup')} className="text-gray-900 font-medium hover:underline">Sign up</button>
-              </p>
-            )}
-            {mode === 'signup' && (
-              <p>Already have an account?{' '}
-                <button onClick={() => switchMode('login')} className="text-gray-900 font-medium hover:underline">Sign in</button>
-              </p>
-            )}
-            {mode === 'forgot' && (
-              <p>
-                <button onClick={() => switchMode('login')} className="text-gray-900 font-medium hover:underline">← Back to sign in</button>
-              </p>
-            )}
-          </div>
-        </div>
+    <AdminAuthShell>
+      <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 6 }}>
+          Admin Portal
+        </p>
+        <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
+          {mode === 'login' && 'Sign in to your account'}
+          {mode === 'signup' && 'Create an organizer account'}
+          {mode === 'forgot' && 'Reset your password'}
+        </p>
       </div>
-    </div>
+
+      {status === 'error' && (
+        <div style={{ marginBottom: 16, background: 'rgba(204,34,34,0.12)', border: '1px solid rgba(204,34,34,0.3)', padding: '12px 16px', fontFamily: 'Actay, sans-serif', fontSize: 13, color: '#CC2222' }}>
+          {errorMsg}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <label className="fomo-label">Email</label>
+          <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="you@example.com" required className="input" />
+        </div>
+
+        {mode !== 'forgot' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label className="fomo-label">Password</label>
+              {mode === 'login' && (
+                <button type="button" onClick={() => switchMode('forgot')}
+                  style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.3)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                  Forgot?
+                </button>
+              )}
+            </div>
+            <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="••••••••" required minLength={6} className="input" />
+          </div>
+        )}
+
+        {mode === 'signup' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <label className="fomo-label">Confirm Password</label>
+            <input type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} placeholder="••••••••" required minLength={6} className="input" />
+          </div>
+        )}
+
+        <button type="submit" disabled={status === 'loading'} className="fomo-btn-primary" style={{ marginTop: 8, width: '100%' }}>
+          {status === 'loading' ? '…' : mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
+        </button>
+      </form>
+
+      <div style={{ textAlign: 'center', marginTop: 20, fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.35)', display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {mode === 'login' && (
+          <p>Don&apos;t have an account?{' '}
+            <button onClick={() => switchMode('signup')} style={{ color: '#CC2222', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Actay, sans-serif', fontSize: 13 }}>Sign up</button>
+          </p>
+        )}
+        {mode === 'signup' && (
+          <p>Already have an account?{' '}
+            <button onClick={() => switchMode('login')} style={{ color: '#CC2222', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Actay, sans-serif', fontSize: 13 }}>Sign in</button>
+          </p>
+        )}
+        {mode === 'forgot' && (
+          <button onClick={() => switchMode('login')} style={{ color: '#CC2222', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Actay, sans-serif', fontSize: 13 }}>
+            ← Back to sign in
+          </button>
+        )}
+      </div>
+    </AdminAuthShell>
   );
 }
 
-function ConfirmScreen({ title, message, onBack }) {
+function AdminAuthShell({ children }) {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 w-full max-w-sm text-center">
-        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-          <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
+    <div style={{ minHeight: '100vh', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px' }}>
+      <div style={{ background: '#111111', padding: 32, width: '100%', maxWidth: 380 }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <Link href="/">
+            <Image src="/images/FOMO-LOGO-Vector.svg" alt="FOMO" width={80} height={28} style={{ height: 28, width: 'auto', margin: '0 auto' }} />
+          </Link>
         </div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">{title}</h2>
-        <p className="text-sm text-gray-500 mb-6">{message}</p>
-        <button onClick={onBack} className="text-sm text-gray-900 font-medium hover:underline">← Back to sign in</button>
+        {children}
       </div>
     </div>
   );

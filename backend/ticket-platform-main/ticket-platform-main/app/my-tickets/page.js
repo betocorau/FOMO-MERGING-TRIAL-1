@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -48,52 +49,50 @@ export default function MyTicketsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading…</p>
+      <div style={{ minHeight: '100vh', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.3)', fontSize: 14, letterSpacing: '0.08em' }}>Loading…</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">FOMO</Link>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-400 hidden sm:block">{user?.email}</span>
-            <button
-              onClick={handleSignOut}
-              className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
-            >
+    <div style={{ minHeight: '100vh', background: '#000000', display: 'flex', flexDirection: 'column' }}>
+
+      {/* Header */}
+      <header style={{ background: '#000000', borderBottom: '1px solid #222222' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Link href="/">
+            <Image src="/images/FOMO-LOGO-Vector.svg" alt="FOMO" width={80} height={28} style={{ height: 28, width: 'auto' }} />
+          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 12, color: 'rgba(255,255,255,0.3)', display: 'none' }}>{user?.email}</span>
+            <button onClick={handleSignOut} style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.05em' }}>
               Sign out
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-10">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8">My Tickets</h1>
+      <main style={{ flex: 1, maxWidth: 800, width: '90%', margin: '0 auto', padding: '48px 0 80px' }}>
+
+        {/* Section title */}
+        <div style={{ marginBottom: 40 }}>
+          <span style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', background: '#CC2222', padding: '8px 20px', fontSize: 20, lineHeight: 1, display: 'inline-block' }}>
+            MY TICKETS
+          </span>
+        </div>
 
         {orders.length === 0 ? (
-          <div className="text-center py-24">
-            <p className="text-gray-400 text-lg mb-6">No tickets yet.</p>
-            <Link
-              href="/"
-              className="text-sm font-medium bg-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors"
-            >
+          <div style={{ textAlign: 'center', padding: '80px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+            <p style={{ fontFamily: 'Actay, sans-serif', color: 'rgba(255,255,255,0.35)', fontSize: 16, letterSpacing: '0.05em' }}>No tickets yet.</p>
+            <Link href="/" style={{ fontFamily: 'Actay, sans-serif', fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase', background: '#CC2222', color: '#ffffff', padding: '12px 28px', borderRadius: 100, textDecoration: 'none' }}>
               Browse Events
             </Link>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {orders.map((order) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                resendingId={resendingId}
-                resentId={resentId}
-                onResend={resendTicket}
-              />
+              <OrderCard key={order.id} order={order} resendingId={resendingId} resentId={resentId} onResend={resendTicket} />
             ))}
           </div>
         )}
@@ -107,33 +106,44 @@ function OrderCard({ order, resendingId, resentId, onResend }) {
   const tickets = order.tickets ?? [];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div style={{ border: '3px solid #222222', background: '#111111' }}>
       {/* Event header */}
-      <div className="px-6 py-4 border-b border-gray-100 flex items-start justify-between gap-4">
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid #222222', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
         <div>
-          <h2 className="font-semibold text-gray-900">{event?.title ?? 'Event'}</h2>
-          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-xs text-gray-500">
+          <h2 style={{ fontFamily: 'ActayWide, sans-serif', fontWeight: 700, fontStyle: 'italic', color: '#ffffff', fontSize: 16, margin: 0 }}>
+            {event?.title ?? 'Event'}
+          </h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', marginTop: 4 }}>
             {event?.date && (
-              <span>
+              <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em' }}>
                 {new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
                 {' · '}
                 {new Date(event.date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
               </span>
             )}
-            {event?.location && <span>{event.location}</span>}
+            {event?.location && (
+              <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.04em' }}>
+                {event.location}
+              </span>
+            )}
           </div>
         </div>
         <button
           onClick={() => onResend(order.id)}
           disabled={resendingId === order.id}
-          className="shrink-0 text-xs font-medium text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors disabled:opacity-50"
+          style={{
+            fontFamily: 'Actay, sans-serif', fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase',
+            color: resentId === order.id ? '#CC2222' : 'rgba(255,255,255,0.5)',
+            background: 'none', border: '1px solid #333333', padding: '8px 16px', cursor: 'pointer', flexShrink: 0, transition: 'color 0.2s, border-color 0.2s',
+            opacity: resendingId === order.id ? 0.5 : 1,
+          }}
         >
-          {resendingId === order.id ? 'Sending…' : resentId === order.id ? '✓ Sent!' : 'Email PDF'}
+          {resendingId === order.id ? 'Sending…' : resentId === order.id ? '✓ Sent' : 'Email PDF'}
         </button>
       </div>
 
       {/* Tickets */}
-      <div className="divide-y divide-gray-100">
+      <div>
         {tickets.map((ticket) => (
           <TicketRow key={ticket.id} ticket={ticket} />
         ))}
@@ -144,23 +154,27 @@ function OrderCard({ order, resendingId, resentId, onResend }) {
 
 function TicketRow({ ticket }) {
   return (
-    <div className="px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-5">
-      <QRCodeImg code={ticket.ticket_code} />
-      <div className="flex-1 min-w-0">
-        <p className="text-xs text-gray-400 mb-1">Ticket code</p>
-        <p className="font-mono text-sm text-gray-900 tracking-wide">{ticket.ticket_code}</p>
-        <div className="mt-3">
-          {ticket.is_used ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 border border-red-200 px-2.5 py-1 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-              Used
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-              Valid
-            </span>
-          )}
+    <div style={{ padding: '20px', borderBottom: '1px solid #1a1a1a', display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+        <QRCodeImg code={ticket.ticket_code} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontFamily: 'Actay, sans-serif', fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 4 }}>
+            Ticket code
+          </p>
+          <p style={{ fontFamily: 'monospace', fontSize: 13, color: '#ffffff', letterSpacing: '0.08em', margin: 0 }}>
+            {ticket.ticket_code}
+          </p>
+          <div style={{ marginTop: 12 }}>
+            {ticket.is_used ? (
+              <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: '#CC2222', background: 'rgba(204,34,34,0.1)', border: '1px solid rgba(204,34,34,0.3)', padding: '4px 10px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Used
+              </span>
+            ) : (
+              <span style={{ fontFamily: 'Actay, sans-serif', fontSize: 11, color: '#4ade80', background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)', padding: '4px 10px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Valid
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -173,12 +187,12 @@ function QRCodeImg({ code }) {
   useEffect(() => {
     import('qrcode').then((mod) => {
       const QRCode = mod.default;
-      QRCode.toDataURL(code, { width: 140, margin: 1 }).then(setSrc);
+      QRCode.toDataURL(code, { width: 120, margin: 1 }).then(setSrc);
     });
   }, [code]);
 
   if (!src) {
-    return <div className="w-[140px] h-[140px] shrink-0 bg-gray-100 rounded-xl animate-pulse" />;
+    return <div style={{ width: 120, height: 120, flexShrink: 0, background: '#1a1a1a' }} />;
   }
-  return <img src={src} alt="QR code" className="w-[140px] h-[140px] shrink-0 rounded-xl border border-gray-100" />;
+  return <img src={src} alt="QR code" style={{ width: 120, height: 120, flexShrink: 0, border: '2px solid #333333' }} />;
 }
