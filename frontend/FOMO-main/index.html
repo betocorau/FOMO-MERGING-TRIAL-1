@@ -1,0 +1,2815 @@
+<!-- FOMO v1.0 - Visual Shell -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOMO</title>
+  <style>
+
+    /* ── Fonts ─────────────────────────────────────────── */
+    @font-face {
+      font-family: 'Actay';
+      src: url('assets/Actay-Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'ActayWide';
+      src: url('assets/ActayWide-BoldItalic.otf') format('opentype');
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    /* ── Reset ─────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: #000000;
+    }
+
+    body {
+      font-family: 'Actay', sans-serif;
+      background: #000000;
+      color: #000000;
+      overflow-x: hidden;
+      overscroll-behavior-y: none;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SECTION 1 — HERO
+    ══════════════════════════════════════════════════════ */
+
+    #hero {
+      min-height: 100vh;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 0;
+      position: relative;
+    }
+
+    /* Mobile-first: full width, grows to constrained on desktop */
+    .hero-inner {
+      width: 92%;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 768px) { .hero-inner { width: 90%; } }
+    @media (min-width: 1024px) { .hero-inner { width: 75%; max-width: 1080px; } }
+
+    /* Language buttons */
+    .lang-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    @media (min-width: 768px) { .lang-buttons { gap: 10px; margin-bottom: 12px; } }
+
+    .lang-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      font-family: 'Actay', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.02em;
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    #btn-en { background: #CC2222; }
+    #btn-es { background: #000000; }
+
+    /* Black logo block */
+    .hero-logo-block {
+      width: 100%;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      flex-shrink: 0;
+    }
+    @media (min-width: 768px) { .hero-logo-block { padding: 16px 40px; } }
+    @media (min-width: 1024px) { .hero-logo-block { padding: 16px 60px; } }
+
+    /* Logo: large on mobile (fills the black block), shrinks on desktop */
+    .hero-logo-block img,
+    .hero-logo-block svg {
+      width: 72vw;
+      height: auto;
+      display: block;
+    }
+    @media (min-width: 768px) {
+      .hero-logo-block img,
+      .hero-logo-block svg { width: 52vw; }
+    }
+    @media (min-width: 1024px) {
+      .hero-logo-block img,
+      .hero-logo-block svg { width: 33vw; }
+    }
+
+
+    /* ══════════════════════════════════════════════════════
+       SHARED — floating section title bars (sections 2–4)
+    ══════════════════════════════════════════════════════ */
+
+    /* Floating bar wrapper — transparent, centers the black pill */
+    .section-bar {
+      width: 100%;
+      background: transparent;
+      padding: 24px 0 0 0;
+      display: flex;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+    @media (min-width: 768px) { .section-bar { padding: 40px 0 0 0; } }
+
+    /* Black floating title pill */
+    .section-bar-title {
+      font-family: 'ActayWide', sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      color: #ffffff;
+      line-height: 1;
+      display: inline-block;
+      background: #000000;
+      padding: 10px 20px;
+      border-radius: 2px;
+      font-size: 28px;
+      white-space: normal;
+      text-align: center;
+    }
+    @media (min-width: 480px) {
+      .section-bar-title { font-size: 38px; padding: 12px 28px; white-space: nowrap; }
+    }
+    @media (min-width: 768px) {
+      .section-bar-title { font-size: 56px; padding: 14px 32px; }
+    }
+    @media (min-width: 1024px) {
+      .section-bar-title { font-size: 77px; padding: 16px 36px; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SECTION 2 — PRIVATE EVENTS
+    ══════════════════════════════════════════════════════ */
+
+    #private-events {
+      position: relative;
+      min-height: 110vh;
+      display: flex;
+      flex-direction: column;
+      background-image: url('assets/newbackgroundprivateevents.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    #private-events.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .private-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 24px 16px;
+    }
+    @media (min-width: 768px) { .private-content { padding: 40px; } }
+
+    .priv-content-title {
+      font-family: 'ActayWide', sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      color: #000000;
+      background: #ffffff;
+      display: block;
+      width: fit-content;
+      margin: 0 auto;
+      padding: 10px 20px;
+      border-radius: 2px;
+      font-size: 28px;
+      line-height: 1;
+      text-align: center;
+      white-space: normal;
+    }
+    @media (min-width: 480px) { .priv-content-title { font-size: 38px; padding: 12px 28px; white-space: nowrap; } }
+    @media (min-width: 768px)  { .priv-content-title { font-size: 56px; padding: 14px 32px; } }
+    @media (min-width: 1024px) { .priv-content-title { font-size: 77px; padding: 16px 36px; } }
+
+    /* Desktop: hide section-bar in private events (title lives inside content) */
+    @media (min-width: 768px) {
+      #private-events .section-bar { display: none; }
+    }
+
+    /* Mobile: revert all private events visual changes back to original */
+    @media (max-width: 767px) {
+      .priv-content-title { display: none; }
+
+      #private-events {
+        background-image: url('assets/Blurbackground.png');
+      }
+
+      #private-events .section-bar-title {
+        background: #ffffff;
+        color: #000000;
+      }
+
+      .private-input {
+        background: #111111;
+        color: #ffffff;
+      }
+
+      .private-input::placeholder {
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      .priv-result-card            { background: #181818; }
+      .priv-result-card:hover      { background: #222222; }
+      .priv-result-name            { color: #ffffff; }
+      .priv-result-sub             { color: rgba(255, 255, 255, 0.4); }
+    }
+
+    .private-input {
+      display: block;
+      width: 90%;
+      max-width: 400px;
+      min-height: 48px;
+      border-radius: 0;
+      border: none;
+      background: #ffffff;
+      font-family: 'Actay', sans-serif;
+      font-size: 16px;
+      color: #000000;
+      padding: 12px 24px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      text-align: center;
+    }
+    @media (min-width: 768px) {
+      .private-input {
+        width: auto;
+        min-width: 520px;
+        font-size: 18px;
+        min-height: unset;
+      }
+    }
+
+    .private-input::placeholder {
+      color: #000000;
+      font-family: 'Actay', sans-serif;
+    }
+
+    /* ── Private event sandbox panels ─────────────────── */
+    .priv-track-wrap {
+      width: 90%;
+      max-width: 400px;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+    @media (min-width: 768px) { .priv-track-wrap { max-width: 568px; } }
+
+    .priv-track {
+      display: flex;
+      width: 200%;
+      transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .priv-panel {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .priv-panel .private-input {
+      width: 100%;
+      max-width: none;
+      min-width: unset;
+      box-sizing: border-box;
+    }
+
+    .priv-result-card {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 0;
+      padding: 14px 20px;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      pointer-events: none;
+      transition: opacity 0.26s ease, transform 0.26s ease, visibility 0.26s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      box-sizing: border-box;
+    }
+    .priv-result-card.is-visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .priv-result-card:hover { background: #f5f5f5; }
+
+    .priv-result-name {
+      color: #000000;
+      font-family: 'Actay', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+    }
+    .priv-result-sub {
+      color: rgba(0,0,0,0.45);
+      font-family: 'Actay', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .priv-pw-title {
+      color: #ffffff;
+      font-family: 'Actay', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0;
+      text-align: center;
+    }
+
+    .priv-pw-btn {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      border-radius: 100px;
+      font-family: 'Actay', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 13px 40px;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+    .priv-pw-btn:hover { opacity: 0.8; }
+
+    .priv-pw-error {
+      color: #CC2222;
+      font-family: 'Actay', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      margin: 0;
+      opacity: 0;
+      transition: opacity 0.22s ease;
+    }
+    .priv-pw-error.is-visible { opacity: 1; }
+
+    /* Event page overlay — slides in from the right */
+    #priv-event-overlay {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 5000;
+      transform: translateX(100%);
+      transition: transform 0.62s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 48px;
+    }
+    #priv-event-overlay.is-visible {
+      transform: translateX(0);
+    }
+
+    .priv-event-back-btn {
+      background: none;
+      border: 1.5px solid rgba(0, 0, 0, 0.18);
+      border-radius: 100px;
+      font-family: 'Actay', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(0, 0, 0, 0.45);
+      padding: 11px 28px;
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .priv-event-back-btn:hover {
+      color: rgba(0, 0, 0, 0.85);
+      border-color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SECTION 3 — PUBLIC EVENTS
+    ══════════════════════════════════════════════════════ */
+
+    #public-events {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    #public-events.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Events grid — mobile: 1 col → tablet: 2 col → desktop: 3 col */
+    .events-grid-container {
+      padding: 16px 16px 40px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-content: start;
+      flex: 1;
+    }
+    @media (min-width: 768px) {
+      .events-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 32px 24px 48px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .events-grid-container {
+        grid-template-columns: repeat(3, 1fr);
+        padding: 40px 40px 60px;
+      }
+    }
+
+    /* ── Mobile-only slideshow (phone) ───────────────── */
+    @media (max-width: 767px) {
+      .events-grid-container {
+        display: block;
+        overflow: hidden;
+        padding: 32px 0 48px;
+      }
+
+      .events-slide-track {
+        display: flex;
+        gap: 12px;
+        transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
+      }
+
+      /* Non-active cards: slightly scaled down so active one pops */
+      .events-slide-track .pub-event-card {
+        flex-shrink: 0;
+        transform: scale(0.88);
+        transition: transform 0.42s ease;
+      }
+
+      /* Kill desktop hover lift on mobile */
+      .events-slide-track .pub-event-card:hover {
+        transform: scale(0.88);
+        box-shadow: none;
+      }
+
+      /* Active (centred) card */
+      .events-slide-track .pub-event-card.slide-active {
+        transform: scale(1);
+        box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+      }
+
+      .events-slide-track .pub-event-card.slide-active:hover {
+        transform: scale(1);
+      }
+    }
+
+    .pub-event-card {
+      border: 3px solid #000000;
+      cursor: pointer;
+      background: #ffffff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      width: 100%;
+    }
+
+    .pub-event-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.16);
+    }
+
+    .card-poster {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .card-poster-name {
+      font-family: 'ActayWide', sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      color: #ffffff;
+      font-size: 20px;
+      text-align: center;
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+    }
+    @media (min-width: 768px) { .card-poster-name { font-size: 22px; } }
+
+    .card-info {
+      padding: 12px 14px 14px;
+      border-top: 3px solid #000000;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    @media (min-width: 768px) { .card-info { padding: 14px 16px 16px; } }
+
+    .card-info-name {
+      font-family: 'ActayWide', sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      font-size: 14px;
+      color: #000000;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+    @media (min-width: 768px) { .card-info-name { font-size: 15px; } }
+
+    .card-info-date,
+    .card-info-location {
+      font-family: 'Actay', sans-serif;
+      font-size: 11px;
+      color: #555555;
+      line-height: 1.4;
+    }
+
+    .card-info-price {
+      font-family: 'Actay', sans-serif;
+      font-size: 12px;
+      color: #CC2222;
+      margin-top: 5px;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       SECTION 4 — MAKE YOUR OWN EVENT
+    ══════════════════════════════════════════════════════ */
+
+    #make-event {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    #make-event.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .make-content {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 60px;
+    }
+    @media (min-width: 768px) { .make-content { padding: 40px 24px 80px; } }
+    @media (min-width: 1024px) { .make-content { padding: 48px 40px 80px; } }
+
+    /* Auth gate wrapper */
+    .form-gate-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* Auth overlay — hidden by default */
+    /* TO ENABLE AUTH GATE: remove display:none from #auth-overlay */
+    #auth-overlay {
+      position: absolute;
+      inset: -20px;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+    }
+
+    .auth-card {
+      background: #111111;
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      max-width: 340px;
+      width: 90%;
+    }
+    @media (min-width: 768px) { .auth-card { padding: 40px; } }
+
+    .auth-logo { width: 80px; height: auto; display: block; }
+
+    .auth-card-title {
+      font-family: 'ActayWide', sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      color: #ffffff;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+    @media (min-width: 768px) { .auth-card-title { font-size: 22px; } }
+
+    .auth-card-btn {
+      background: #CC2222;
+      color: #ffffff;
+      border: none;
+      border-radius: 100px;
+      padding: 14px 32px;
+      font-family: 'Actay', sans-serif;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
+      min-height: 48px;
+      transition: background 0.2s ease;
+    }
+
+    .auth-card-btn:hover { background: #aa1818; }
+
+    /* Form container */
+    #create-event-form {
+      background: #111111;
+      border-radius: 0;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+    @media (min-width: 768px) {
+      #create-event-form { padding: 32px; gap: 20px; }
+    }
+    @media (min-width: 1024px) {
+      #create-event-form { padding: 40px; }
+    }
+
+    .form-field { display: flex; flex-direction: column; gap: 8px; }
+
+    .form-label {
+      font-family: 'Actay', sans-serif;
+      font-size: 11px;
+      color: #888888;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Shared input styles */
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background: #222222;
+      border: 1px solid #444444;
+      border-radius: 0;
+      padding: 14px 18px;
+      color: #ffffff;
+      font-family: 'Actay', sans-serif;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      min-height: 48px;
+    }
+    @media (min-width: 768px) { .form-input, .form-select, .form-textarea { font-size: 15px; min-height: unset; } }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus { border-color: #CC2222; }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: #555555; }
+
+    input[type="date"].form-input,
+    input[type="time"].form-input { color-scheme: dark; }
+
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 18px center;
+      padding-right: 44px;
+      cursor: pointer;
+    }
+
+    .form-select option { background: #222222; color: #ffffff; }
+
+    /* Date + Time — stacked on mobile, side-by-side on tablet+ */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 480px) { .form-row { grid-template-columns: 1fr 1fr; } }
+
+    /* Visibility toggle pills */
+    .vis-toggle { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .vis-btn {
+      background: #333333;
+      color: #ffffff;
+      border: none;
+      border-radius: 0;
+      padding: 12px 20px;
+      font-family: 'Actay', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      min-height: 44px;
+      transition: background 0.2s ease, color 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .vis-btn.selected { background: #ffffff; color: #000000; }
+
+    .passcode-note {
+      font-family: 'Actay', sans-serif;
+      font-size: 12px;
+      color: #CC2222;
+      line-height: 1.5;
+    }
+
+    /* Ticket tier rows — stacked on mobile */
+    .tier-row {
+      display: grid;
+      grid-template-columns: 1fr 100px 44px;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    @media (min-width: 480px) { .tier-row { grid-template-columns: 1fr 120px 44px; gap: 10px; } }
+
+    .tier-delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      width: 44px;
+      height: 44px;
+      opacity: 0.4;
+      transition: opacity 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    @media (hover: hover) {
+      .tier-delete-btn { opacity: 0; }
+      .tier-row:hover .tier-delete-btn { opacity: 1; }
+    }
+
+    /* Additional images field */
+    #additional-images-field { transition: opacity 0.3s ease; }
+    #additional-images-upload { display: none; }
+
+    .add-tier-btn {
+      background: none;
+      border: none;
+      color: #CC2222;
+      font-family: 'Actay', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: left;
+      padding: 4px 0;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      transition: opacity 0.2s ease;
+    }
+
+    .add-tier-btn:hover { opacity: 0.7; }
+
+    /* File upload */
+    #poster-upload { display: none; }
+
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 52px;
+      border-radius: 0;
+      background: #222222;
+      border: 1px solid #444444;
+      color: #ffffff;
+      font-family: 'Actay', sans-serif;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color 0.2s ease;
+    }
+
+    .file-upload-label:hover { border-color: #CC2222; }
+
+    /* Submit */
+    .form-submit-btn {
+      height: 56px;
+      border-radius: 0;
+      border: none;
+      background: #CC2222;
+      color: #ffffff;
+      font-family: 'Actay', sans-serif;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s ease;
+      margin-top: 4px;
+    }
+
+    .form-submit-btn:hover { background: #aa1818; }
+
+    .form-submit-message {
+      font-family: 'Actay', sans-serif;
+      font-size: 14px;
+      color: #ffffff;
+      text-align: center;
+      padding: 16px 0 0;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════════ */
+
+    #footer {
+      background: #000000;
+      border-top: 2px solid #CC2222;
+      padding: 40px 20px 32px;
+    }
+    @media (min-width: 768px) { #footer { padding: 60px 40px 40px; } }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    @media (min-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 48px;
+        text-align: left;
+        margin-bottom: 48px;
+      }
+    }
+
+    .footer-logo {
+      width: 52px;
+      height: auto;
+      display: block;
+      margin-bottom: 14px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (min-width: 768px) {
+      .footer-logo { width: 60px; margin-left: 0; margin-right: 0; }
+    }
+
+    .footer-tagline {
+      font-family: 'Actay', sans-serif;
+      font-size: 13px;
+      color: #ffffff;
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+
+    .footer-copyright {
+      font-family: 'Actay', sans-serif;
+      font-size: 12px;
+      color: #666666;
+      line-height: 1.6;
+    }
+
+    .footer-col-title {
+      font-family: 'ActayWide', sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      color: #ffffff;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+    @media (min-width: 768px) { .footer-links { align-items: flex-start; } }
+
+    .footer-link {
+      font-family: 'Actay', sans-serif;
+      font-size: 13px;
+      color: #888888;
+      text-decoration: none;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s ease;
+    }
+    @media (min-width: 768px) { .footer-link { min-height: unset; } }
+
+    .footer-link:hover { color: #ffffff; }
+
+    .footer-divider {
+      border: none;
+      border-top: 1px solid #222222;
+      margin-bottom: 24px;
+    }
+
+    .footer-credit {
+      font-family: 'Actay', sans-serif;
+      font-size: 11px;
+      color: #444444;
+      text-align: center;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       EVENT MODAL
+    ══════════════════════════════════════════════════════ */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.90);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    @media (min-width: 768px) { .modal-overlay { padding: 24px; } }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Mobile: column layout, constrained height, scrollable */
+    .modal-box {
+      background: #0d0d0d;
+      width: 100%;
+      max-width: 560px;
+      max-height: 80vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transform: translateY(24px);
+      transition: transform 0.35s ease;
+    }
+    @media (min-width: 768px) {
+      .modal-box {
+        max-width: 900px;
+        max-height: 90vh;
+        flex-direction: row;
+      }
+    }
+
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      font-family: 'Actay', sans-serif;
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-close-btn:hover { opacity: 1; }
+
+    /* Mobile: poster is full width, shorter */
+    .modal-poster-panel {
+      width: 100%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 24px;
+      min-height: 180px;
+    }
+    @media (min-width: 768px) {
+      .modal-poster-panel { width: 42%; padding: 48px 36px; min-height: 340px; }
+    }
+
+    .modal-poster-name-lg {
+      font-family: 'ActayWide', sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      color: #ffffff;
+      font-size: 24px;
+      text-align: center;
+      line-height: 1.1;
+    }
+    @media (min-width: 768px) { .modal-poster-name-lg { font-size: 30px; } }
+
+    .modal-details-panel {
+      flex: 1;
+      padding: 32px 20px 28px;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 768px) { .modal-details-panel { padding: 52px 40px 40px 32px; } }
+
+    .modal-event-title {
+      font-family: 'ActayWide', sans-serif;
+      font-weight: 700;
+      font-style: italic;
+      color: #ffffff;
+      font-size: 28px;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+    @media (min-width: 768px) { .modal-event-title { font-size: 46px; margin-bottom: 18px; } }
+
+    .modal-meta {
+      font-family: 'Actay', sans-serif;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.65);
+      line-height: 1.6;
+      margin-bottom: 2px;
+    }
+
+    .modal-desc {
+      font-family: 'Actay', sans-serif;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.75;
+      margin-top: 14px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 768px) { .modal-desc { margin-top: 16px; margin-bottom: 28px; } }
+
+    .modal-tiers {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    @media (min-width: 768px) { .modal-tiers { margin-bottom: 20px; } }
+
+    .modal-tier-pill {
+      background: #1e1e1e;
+      border-radius: 100px;
+      padding: 10px 20px;
+      font-family: 'Actay', sans-serif;
+      font-size: 13px;
+      color: #ffffff;
+    }
+
+    .modal-buy-btn {
+      background: #CC2222;
+      color: #ffffff;
+      border: none;
+      border-radius: 100px;
+      padding: 14px 32px;
+      font-family: 'Actay', sans-serif;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
+      min-height: 48px;
+      transition: background 0.2s ease;
+      margin-top: auto;
+    }
+
+    .modal-buy-btn:hover { background: #aa1818; }
+
+    /* ── Left marquee sidebar ──────────────────────────── */
+    .left-marquee { display: none; }
+
+    @media (min-width: 769px) {
+      .left-marquee {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 45px;
+        height: 100vh;
+        background: #000000;
+        z-index: 9999;
+        overflow: hidden;
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      .left-marquee-track {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 45px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: leftMarqueeMove 36s linear infinite;
+      }
+
+      .marquee-group {
+        width: 45px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        padding-bottom: 14px;
+      }
+
+      .marquee-group span {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        color: #ffffff;
+        font-family: 'ActayWide', sans-serif;
+        font-weight: 700;
+        font-style: italic;
+        font-size: 40px;
+        line-height: 45px;
+        white-space: nowrap;
+        letter-spacing: 0.5px;
+        text-align: center;
+      }
+
+      @keyframes leftMarqueeMove {
+        from { transform: translateY(0); }
+        to   { transform: translateY(-50%); }
+      }
+
+      body { padding-left: 45px; }
+    }
+
+    /* ── Desktop slide-out menu ────────────────────────── */
+    .desktop-menu-panel { display: none; }
+
+    @media (min-width: 769px) {
+      .desktop-menu-panel {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 45px;
+        width: 300px;
+        height: 100vh;
+        background: #000000;
+        color: #ffffff;
+        z-index: 9998;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 48px 28px 36px;
+        transform: translateX(-110%);
+        transition: transform 0.35s ease;
+      }
+
+      .desktop-menu-panel.is-open {
+        transform: translateX(0);
+      }
+
+      .desktop-menu-close {
+        position: absolute;
+        top: 16px;
+        right: 18px;
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 28px;
+        cursor: pointer;
+        line-height: 1;
+        font-family: 'Actay', sans-serif;
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+      }
+      .desktop-menu-close:hover { opacity: 1; }
+
+      .desktop-menu-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 16px;
+      }
+
+      .desktop-menu-nav button {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-family: 'ActayWide', sans-serif;
+        font-weight: 700;
+        font-style: italic;
+        font-size: 36px;
+        cursor: pointer;
+        text-align: left;
+        padding: 6px 0;
+        line-height: 1.1;
+        transition: color 0.2s ease;
+      }
+      .desktop-menu-nav button:hover { color: #CC2222; }
+
+      .desktop-menu-create {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        border-top: 1px solid #222222;
+        padding-top: 20px;
+      }
+
+      .desktop-menu-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 1.5px solid #444444;
+        flex-shrink: 0;
+        background: #1a1a1a;
+      }
+
+      .desktop-menu-create span {
+        font-family: 'Actay', sans-serif;
+        font-size: 17px;
+        color: #CC2222;
+        letter-spacing: 0.03em;
+      }
+
+      .desktop-menu-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        border-top: 1px solid #222222;
+        padding-top: 20px;
+      }
+
+      .desktop-menu-footer button {
+        background: transparent;
+        border: none;
+        color: #666666;
+        font-family: 'Actay', sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 0;
+        transition: color 0.2s ease;
+        letter-spacing: 0.04em;
+      }
+      .desktop-menu-footer button:hover { color: #ffffff; }
+    }
+
+    /* ── Mobile sticky logo bar ────────────────────────── */
+    #mobile-logo-bar { display: none; }
+
+    @media (max-width: 767px) {
+      /* Logo pins to top while scrolling within the hero */
+      .hero-logo-block {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+      }
+
+      /* Fixed clone that takes over once hero is scrolled past */
+      #mobile-logo-bar { cursor: pointer; }
+      #mobile-logo-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #000000;
+        z-index: 300;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 16px;
+        transform: translateY(-100%);
+        will-change: transform;
+      }
+
+      #mobile-logo-bar img {
+        width: 72vw;
+        height: auto;
+        display: block;
+      }
+    }
+
+    /* ── Mobile menu panel ──────────────────────────────── */
+    .mobile-hamburger  { display: none; }
+    .mobile-bar-spacer { display: none; }
+    .mobile-menu-panel { display: none; }
+
+    @media (max-width: 767px) {
+      /* Sticky bar: hamburger | logo | spacer */
+      #mobile-logo-bar {
+        display: grid;
+        grid-template-columns: 48px 1fr 48px;
+        align-items: center;
+      }
+
+      #mobileStickyLogo {
+        justify-self: center;
+      }
+
+      .mobile-bar-spacer { display: block; }
+
+      .mobile-hamburger {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 10px 12px;
+        width: 48px;
+        height: 48px;
+      }
+
+      .mobile-hamburger span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #ffffff;
+        border-radius: 2px;
+      }
+
+      /* Mobile menu panel — slides down from top, fills space below sticky bar */
+      .mobile-menu-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: #000000;
+        z-index: 298;
+        padding: 0 32px 48px;
+        transform: translateY(-100%);
+        transition: transform 0.35s ease;
+      }
+
+      .mobile-menu-panel.is-open {
+        transform: translateY(0);
+      }
+
+      .mobile-menu-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .mobile-menu-nav button {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-family: 'ActayWide', sans-serif;
+        font-weight: 700;
+        font-style: italic;
+        font-size: 44px;
+        text-align: left;
+        cursor: pointer;
+        padding: 4px 0;
+        line-height: 1.15;
+        transition: color 0.2s ease;
+      }
+
+      .mobile-menu-nav button:active { color: #CC2222; }
+
+      .mobile-menu-account {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border-top: 1px solid #222222;
+        padding-top: 24px;
+        cursor: pointer;
+      }
+
+      .mobile-menu-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1.5px solid #444444;
+        background: #1a1a1a;
+        flex-shrink: 0;
+      }
+
+      .mobile-menu-account span {
+        font-family: 'Actay', sans-serif;
+        font-size: 16px;
+        color: #CC2222;
+      }
+
+      .mobile-menu-footer {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #222222;
+        padding-top: 20px;
+      }
+
+      .mobile-menu-footer button {
+        background: none;
+        border: none;
+        color: #666666;
+        font-family: 'Actay', sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 0;
+        min-height: 44px;
+        transition: color 0.2s ease;
+      }
+
+      .mobile-menu-footer button:active { color: #ffffff; }
+    }
+
+    /* ── Hero scroll indicator ─────────────────────────── */
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: scrollBounce 1.4s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    .hero-scroll-label {
+      font-family: 'Actay', sans-serif;
+      font-size: 10px;
+      color: #aaaaaa;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .hero-scroll-arrow {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ── Intro loader ──────────────────────────────────── */
+    #introLoader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #000000;
+      z-index: 10000;
+    }
+    @media (max-width: 767px) {
+      #introLoader { height: 100dvh; }
+    }
+
+    /* Each intro eye = white O-block with a black pupil div inside */
+    .intro-eye {
+      position: fixed;
+      background: #ffffff;
+      transform: scaleY(0);
+      transform-origin: center center;
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: hidden;
+    }
+
+    .intro-eye-pupil {
+      position: absolute;
+      background: #000000;
+    }
+
+    #introLoader.is-opening .intro-eye {
+      transform: scaleY(1);
+    }
+
+    @keyframes introBlink {
+      0%   { transform: scaleY(1); }
+      14%  { transform: scaleY(0.06); }
+      28%  { transform: scaleY(1); }
+      60%  { transform: scaleY(1); }
+      74%  { transform: scaleY(0.06); }
+      88%  { transform: scaleY(1); }
+      100% { transform: scaleY(1); }
+    }
+
+    #introLoader.is-blinking .intro-eye {
+      transition: none;
+      animation: introBlink 0.85s ease forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #introLoader { display: none; }
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="introLoader">
+  <div id="intro-eye-l" class="intro-eye"><div class="intro-eye-pupil"></div></div>
+  <div id="intro-eye-r" class="intro-eye"><div class="intro-eye-pupil"></div></div>
+</div>
+
+<div id="mobile-logo-bar">
+  <button id="mobileHamburger" class="mobile-hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <img src="assets/FomoLogoAnimation.svg" alt="FOMO" id="mobileStickyLogo" />
+  <div class="mobile-bar-spacer"></div>
+</div>
+
+<div id="mobileMenuPanel" class="mobile-menu-panel">
+  <nav class="mobile-menu-nav">
+    <button data-mobile-scroll="hero"           data-en="home"    data-es="inicio">home</button>
+    <button data-mobile-scroll="private-events" data-en="private" data-es="privado">private</button>
+    <button data-mobile-scroll="public-events"  data-en="public"  data-es="público">public</button>
+    <button data-mobile-scroll="make-event"     data-en="host"    data-es="organiza">host</button>
+  </nav>
+
+  <div class="mobile-menu-account">
+    <div class="mobile-menu-avatar"></div>
+    <span data-en="create account" data-es="crear cuenta">create account</span>
+  </div>
+
+  <div class="mobile-menu-footer">
+    <button data-en="instagram" data-es="instagram">instagram</button>
+    <button data-en="contact"   data-es="contacto">contact</button>
+    <button data-en="about"     data-es="nosotros">about</button>
+  </div>
+</div>
+
+<div class="desktop-menu-panel" id="desktopMenuPanel">
+  <button class="desktop-menu-close" id="desktopMenuClose" aria-label="Close menu">×</button>
+
+  <nav class="desktop-menu-nav">
+    <button data-scroll-target="hero"           data-en="home"    data-es="inicio">home</button>
+    <button data-scroll-target="private-events" data-en="private" data-es="privado">private</button>
+    <button data-scroll-target="public-events"  data-en="public"  data-es="público">public</button>
+    <button data-scroll-target="make-event"     data-en="host"    data-es="organiza">host</button>
+  </nav>
+
+  <div class="desktop-menu-create">
+    <div class="desktop-menu-avatar"></div>
+    <span data-en="create account" data-es="crear cuenta">create account</span>
+  </div>
+
+  <div class="desktop-menu-footer">
+    <button data-footer-link="instagram" data-en="instagram" data-es="instagram">instagram</button>
+    <button data-footer-link="contact"   data-en="contact"   data-es="contacto">contact</button>
+    <button data-footer-link="about"     data-en="about"     data-es="nosotros">about</button>
+  </div>
+</div>
+
+<div class="left-marquee" role="button" aria-label="Open menu">
+  <div class="left-marquee-track">
+    <div class="marquee-group">
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+    </div>
+    <div class="marquee-group" aria-hidden="true">
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+      <span>MENU</span>
+      <span>FOMO</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 1 — HERO
+══════════════════════════════════════════════════════ -->
+<section id="hero">
+
+  <!-- Left-aligned block: buttons → logo → dark input -->
+  <div class="hero-inner">
+
+    <div class="lang-buttons">
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+    </div>
+
+    <div class="hero-logo-block">
+      <svg id="fomo-logo-svg" width="711" height="282" viewBox="0 0 711 282" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="27" height="282" fill="white"/>
+        <rect width="122" height="54" transform="matrix(-1 0 0 1 142 0)" fill="white"/>
+        <rect width="118" height="86" transform="matrix(-1 0 0 1 142 67)" fill="white"/>
+        <rect x="460" width="25" height="282" fill="white"/>
+        <rect x="512" width="25" height="282" fill="white"/>
+        <rect x="351" width="70" height="282" fill="white"/>
+        <rect x="356" width="181" height="54" fill="white"/>
+        <rect x="177" width="140" height="282" fill="white"/>
+        <rect id="eye-left"  x="251" y="17" width="41" height="190" fill="black"
+              style="transform-box:fill-box;transform-origin:center;transition:transform 0.08s ease;"/>
+        <rect x="571" width="140" height="282" fill="white"/>
+        <rect id="eye-right" x="645" y="17" width="41" height="190" fill="black"
+              style="transform-box:fill-box;transform-origin:center;transition:transform 0.08s ease;"/>
+      </svg>
+    </div>
+
+  </div>
+
+  <div class="hero-scroll" onclick="document.getElementById('private-events').scrollIntoView({behavior:'smooth'})">
+    <span class="hero-scroll-label" data-en="scroll to find events" data-es="desplázate para ver eventos">scroll to find events</span>
+    <svg class="hero-scroll-arrow" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 16L24 34L40 16" stroke="#aaaaaa" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 2 — PRIVATE EVENTS
+══════════════════════════════════════════════════════ -->
+<section id="private-events">
+
+  <div class="section-bar">
+    <span
+      class="section-bar-title"
+      data-en="private events"
+      data-es="eventos privados"
+    >private events</span>
+  </div>
+
+  <div class="private-content">
+    <span class="priv-content-title"
+          data-en="private events"
+          data-es="eventos privados">private events</span>
+    <div class="priv-track-wrap">
+      <div class="priv-track" id="priv-track">
+
+        <!-- Panel 0: Search -->
+        <div class="priv-panel">
+          <input
+            type="text"
+            class="private-input"
+            id="private-passcode-input"
+            data-en="enter event name or link to access private event"
+            data-es="ingresa el nombre o enlace para acceder al evento privado"
+            placeholder="enter event name or link to access private event"
+            autocomplete="off"
+          />
+          <div class="priv-result-card" id="priv-result-card">
+            <span class="priv-result-name">Trojan Fest</span>
+            <span class="priv-result-sub">This event is private</span>
+          </div>
+        </div>
+
+        <!-- Panel 1: Password entry -->
+        <div class="priv-panel">
+          <p class="priv-pw-title"
+             data-en="Enter event password"
+             data-es="Ingresa la contraseña del evento">Enter event password</p>
+          <input
+            type="password"
+            class="private-input"
+            id="priv-pw-input"
+            data-en="password"
+            data-es="contraseña"
+            placeholder="password"
+            autocomplete="off"
+          />
+          <button class="priv-pw-btn" id="priv-pw-btn"
+                  data-en="Submit" data-es="Ingresar">Submit</button>
+          <p class="priv-pw-error" id="priv-pw-error"
+             data-en="Incorrect password" data-es="Contraseña incorrecta">Incorrect password</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Event page overlay (future Trojan Fest page) -->
+<div id="priv-event-overlay">
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <button class="priv-event-back-btn" id="priv-nav-to-access"
+            data-en="return to access" data-es="volver al acceso">return to access</button>
+    <button class="priv-event-back-btn"
+            data-en="save to my events" data-es="guardar en mis eventos">save to my events</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 3 — PUBLIC EVENTS
+══════════════════════════════════════════════════════ -->
+<section id="public-events">
+
+  <div class="section-bar">
+    <span
+      class="section-bar-title"
+      data-en="public events"
+      data-es="eventos públicos"
+    >public events</span>
+  </div>
+
+  <div class="events-grid-container">
+
+    <!-- NOCTURNA -->
+    <div class="pub-event-card" onclick="openModal('nocturna')">
+      <div class="card-poster" style="background:#0d0d0d;">
+        <span class="card-poster-name">NOCTURNA</span>
+      </div>
+      <div class="card-info">
+        <p class="card-info-name"  data-en="NOCTURNA"             data-es="NOCTURNA">NOCTURNA</p>
+        <p class="card-info-date"  data-en="Sat May 31, 2026 · 10PM" data-es="Sáb 31 mayo 2026 · 10PM">Sat May 31, 2026 · 10PM</p>
+        <p class="card-info-location" data-en="Distrito 4, San José" data-es="Distrito 4, San José">Distrito 4, San José</p>
+        <p class="card-info-price" data-en="From $15"             data-es="Desde $15">From $15</p>
+      </div>
+    </div>
+
+    <!-- TROJAN FEST -->
+    <div class="pub-event-card" onclick="openModal('trojanfest')">
+      <div class="card-poster" style="background:#141010;">
+        <span class="card-poster-name">TROJAN FEST</span>
+      </div>
+      <div class="card-info">
+        <p class="card-info-name"  data-en="TROJAN FEST"          data-es="TROJAN FEST">TROJAN FEST</p>
+        <p class="card-info-date"  data-en="Sun Jun 1, 2026 · 4PM"  data-es="Dom 1 jun 2026 · 4PM">Sun Jun 1, 2026 · 4PM</p>
+        <p class="card-info-location" data-en="Parque Viva, Alajuela" data-es="Parque Viva, Alajuela">Parque Viva, Alajuela</p>
+        <p class="card-info-price" data-en="From $35"             data-es="Desde $35">From $35</p>
+      </div>
+    </div>
+
+    <!-- SOLEMAR -->
+    <div class="pub-event-card" onclick="openModal('solemar')">
+      <div class="card-poster" style="background:#0d1310;">
+        <span class="card-poster-name">SOLEMAR</span>
+      </div>
+      <div class="card-info">
+        <p class="card-info-name"  data-en="SOLEMAR"              data-es="SOLEMAR">SOLEMAR</p>
+        <p class="card-info-date"  data-en="Fri Jun 6, 2026 · 8PM"  data-es="Vie 6 jun 2026 · 8PM">Fri Jun 6, 2026 · 8PM</p>
+        <p class="card-info-location" data-en="Playa Tamarindo, Guanacaste" data-es="Playa Tamarindo, Guanacaste">Playa Tamarindo, Guanacaste</p>
+        <p class="card-info-price" data-en="From $20"             data-es="Desde $20">From $20</p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 4 — MAKE YOUR OWN EVENT
+══════════════════════════════════════════════════════ -->
+<section id="make-event">
+
+  <div class="section-bar">
+    <span
+      class="section-bar-title"
+      data-en="make your own event"
+      data-es="crea tu propio evento"
+    >make your own event</span>
+  </div>
+
+  <div class="make-content">
+    <div class="form-gate-wrapper">
+
+      <!-- Auth overlay — hidden by default. TO ENABLE AUTH GATE: remove style="display:none" -->
+      <div id="auth-overlay" style="display:none;">
+        <div class="auth-card">
+          <img src="assets/FomoLogoVector2.svg" alt="FOMO" class="auth-logo" />
+          <p class="auth-card-title"
+             data-en="create an account to make your event"
+             data-es="crea una cuenta para publicar tu evento">
+            create an account to make your event
+          </p>
+          <button class="auth-card-btn"
+                  data-en="Create Account"
+                  data-es="Crear Cuenta">Create Account</button>
+        </div>
+      </div>
+
+      <form id="create-event-form" onsubmit="handleFormSubmit(event)" novalidate>
+
+        <!-- Event Name -->
+        <div class="form-field">
+          <label class="form-label"
+                 data-en="Event Name" data-es="Nombre del Evento">Event Name</label>
+          <input class="form-input" type="text"
+                 data-en="what's the event called?"
+                 data-es="¿cómo se llama el evento?"
+                 placeholder="what's the event called?" />
+        </div>
+
+        <!-- Event Type -->
+        <div class="form-field">
+          <label class="form-label"
+                 data-en="Event Type" data-es="Tipo de Evento">Event Type</label>
+          <select class="form-select">
+            <option value="party"    data-en="Party"         data-es="Fiesta">Party</option>
+            <option value="concert"  data-en="Concert"       data-es="Concierto">Concert</option>
+            <option value="festival" data-en="Festival"      data-es="Festival">Festival</option>
+            <option value="fashion"  data-en="Fashion Show"  data-es="Desfile de Moda">Fashion Show</option>
+            <option value="sports"   data-en="Sports"        data-es="Deportes">Sports</option>
+            <option value="art"      data-en="Art &amp; Culture" data-es="Arte y Cultura">Art &amp; Culture</option>
+            <option value="other"    data-en="Other"         data-es="Otro">Other</option>
+          </select>
+        </div>
+
+        <!-- Visibility -->
+        <div class="form-field">
+          <label class="form-label"
+                 data-en="Visibility" data-es="Visibilidad">Visibility</label>
+          <div class="vis-toggle">
+            <button type="button" class="vis-btn selected" data-value="public"
+                    data-en="Public" data-es="Público">Public</button>
+            <button type="button" class="vis-btn" data-value="private"
+                    data-en="Private" data-es="Privado">Private</button>
+            <button type="button" class="vis-btn" data-value="invitation"
+                    data-en="Invitation Only" data-es="Solo por Invitación">Invitation Only</button>
+          </div>
+          <p class="passcode-note" id="passcode-note" style="display:none;"
+             data-en="A unique passcode will be generated for your event."
+             data-es="Se generará un código único para tu evento.">
+            A unique passcode will be generated for your event.
+          </p>
+        </div>
+
+        <!-- Date + Time -->
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label"
+                   data-en="Date" data-es="Fecha">Date</label>
+            <input class="form-input" type="date" />
+          </div>
+          <div class="form-field">
+            <label class="form-label"
+                   data-en="Time" data-es="Hora">Time</label>
+            <input class="form-input" type="time" />
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="form-field">
+          <label class="form-label"
+                 data-en="Location" data-es="Ubicación">Location</label>
+          <input class="form-input" type="text"
+                 data-en="venue or address"
+                 data-es="lugar o dirección"
+                 placeholder="venue or address" />
+        </div>
+
+        <!-- Ticket Tiers -->
+        <div class="form-field">
+          <label class="form-label"
+                 data-en="Ticket Tiers" data-es="Tipos de Entrada">Ticket Tiers</label>
+          <div id="tier-container">
+            <div class="tier-row">
+              <input class="form-input" type="text"
+                     data-en="e.g. General" data-es="ej. General"
+                     placeholder="e.g. General" />
+              <input class="form-input" type="number" placeholder="$0" min="0" />
+              <button type="button" class="tier-delete-btn" onclick="removeTier(this)"
+                      data-en="Remove tier" data-es="Eliminar tier" title="Remove tier">
+                <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 4h14M5 4V2h6v2M2.5 4L4 16h8l1.5-12" stroke="#666666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="add-tier-btn" id="add-tier-btn"
+                  data-en="+ Add another tier" data-es="+ Agregar tipo de entrada">
+            + Add another tier
+          </button>
+        </div>
+
+        <!-- Description -->
+        <div class="form-field">
+          <label class="form-label"
+                 data-en="Event Description" data-es="Descripción del Evento">Event Description</label>
+          <textarea class="form-textarea" rows="4"
+                    data-en="describe the experience"
+                    data-es="describe la experiencia"
+                    placeholder="describe the experience"></textarea>
+        </div>
+
+        <!-- Upload Poster -->
+        <div class="form-field">
+          <label class="form-label"
+                 data-en="Event Poster" data-es="Póster del Evento">Event Poster</label>
+          <input type="file" id="poster-upload" accept="image/*" />
+          <label for="poster-upload" class="file-upload-label"
+                 data-en="upload event poster" data-es="subir póster del evento">
+            upload event poster
+          </label>
+        </div>
+
+        <!-- Additional images — visible only when Private is selected -->
+        <div class="form-field" id="additional-images-field" style="display:none; opacity:0;">
+          <label class="form-label"
+                 data-en="Additional Event Images" data-es="Imágenes Adicionales">Additional Event Images</label>
+          <input type="file" id="additional-images-upload" accept="image/*" multiple />
+          <label for="additional-images-upload" class="file-upload-label"
+                 data-en="Upload Additional Event Images"
+                 data-es="Subir Imágenes Adicionales del Evento">
+            Upload Additional Event Images
+          </label>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="form-submit-btn"
+                data-en="Create Event" data-es="Crear Evento">Create Event</button>
+
+        <p class="form-submit-message" id="form-submit-message" style="display:none;"
+           data-en="Your event has been submitted. We will review and publish it shortly."
+           data-es="Tu evento ha sido enviado. Lo revisaremos y publicaremos pronto.">
+          Your event has been submitted. We will review and publish it shortly.
+        </p>
+
+      </form>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════ -->
+<footer id="footer">
+  <div class="footer-grid">
+
+    <!-- Left: logo + tagline -->
+    <div class="footer-col">
+      <img src="assets/FomoLogoVector2.svg" alt="FOMO" class="footer-logo" />
+      <p class="footer-tagline"
+         data-en="The only ticketing platform for private events in Costa Rica."
+         data-es="La única plataforma de tickets para eventos privados en Costa Rica.">
+        The only ticketing platform for private events in Costa Rica.
+      </p>
+      <p class="footer-copyright"
+         data-en="© 2026 FOMO. All rights reserved."
+         data-es="© 2026 FOMO. Todos los derechos reservados.">
+        © 2026 FOMO. All rights reserved.
+      </p>
+    </div>
+
+    <!-- Right: contact -->
+    <div class="footer-col">
+      <span class="footer-col-title"
+            data-en="Contact" data-es="Contacto">Contact</span>
+      <div class="footer-links">
+        <a href="mailto:support.fomo@gmail.com" class="footer-link">support.fomo@gmail.com</a>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="footer-divider" />
+
+  <p class="footer-credit">Designed &amp; Built by Folio Labs · foliocr.com</p>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════
+     EVENT MODAL
+══════════════════════════════════════════════════════ -->
+<div id="event-modal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
+  <div class="modal-box">
+    <button class="modal-close-btn" onclick="closeModal()">✕</button>
+
+    <div class="modal-poster-panel" id="modal-poster-panel">
+      <span class="modal-poster-name-lg" id="modal-poster-name"></span>
+    </div>
+
+    <div class="modal-details-panel">
+      <h2 class="modal-event-title" id="modal-event-title" data-en="" data-es=""></h2>
+      <p  class="modal-meta"         id="modal-date"        data-en="" data-es=""></p>
+      <p  class="modal-meta"         id="modal-location"    data-en="" data-es=""></p>
+      <p  class="modal-desc"         id="modal-desc"        data-en="" data-es=""></p>
+      <div class="modal-tiers">
+        <div class="modal-tier-pill" id="modal-tier-0" data-en="" data-es=""></div>
+        <div class="modal-tier-pill" id="modal-tier-1" data-en="" data-es=""></div>
+      </div>
+      <button class="modal-buy-btn" data-en="Buy Tickets" data-es="Comprar Boletos">Buy Tickets</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  /* ── Language toggle ─────────────────────────────── */
+  let currentLang = 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+
+    document.querySelectorAll('[data-en]').forEach(function(el) {
+      var text = el.dataset[lang];
+      if (!text) return;
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = text;
+      } else {
+        el.textContent = text;
+      }
+    });
+
+    document.querySelectorAll('.tier-delete-btn').forEach(function(el) {
+      el.title = el.dataset[lang] || el.title;
+    });
+
+    var btnEn = document.getElementById('btn-en');
+    var btnEs = document.getElementById('btn-es');
+    if (lang === 'en') {
+      btnEn.style.background = '#CC2222';
+      btnEs.style.background = '#000000';
+    } else {
+      btnEs.style.background = '#CC2222';
+      btnEn.style.background = '#000000';
+    }
+  }
+
+document.getElementById('private-passcode-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      console.log('Private passcode entered:', this.value);
+    }
+  });
+
+  /* ── Intersection Observer — fade-up on scroll ───── */
+  var fadeTargets = ['private-events', 'public-events', 'make-event'];
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  fadeTargets.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+  /* ── Event data ──────────────────────────────────── */
+  var eventData = {
+    nocturna: {
+      name: { en: 'NOCTURNA', es: 'NOCTURNA' },
+      date: { en: 'Saturday, May 31 2026 · 10PM', es: 'Sábado, 31 de mayo 2026 · 10PM' },
+      location: { en: 'Distrito 4, San José', es: 'Distrito 4, San José' },
+      desc: {
+        en: 'An immersive underground night featuring Costa Rica\'s finest selectors. Expect deep electronic sets, pulsating visuals, and a crowd that lives for the night.',
+        es: 'Una noche underground inmersiva con los mejores selectores de Costa Rica. Sets electrónicos profundos, visuales hipnóticos y una multitud que vive para la noche.'
+      },
+      tiers: [
+        { name: { en: 'General', es: 'General' }, price: '$15' },
+        { name: { en: 'VIP',     es: 'VIP'     }, price: '$30' }
+      ],
+      bg: '#0d0d0d'
+    },
+    trojanfest: {
+      name: { en: 'TROJAN FEST', es: 'TROJAN FEST' },
+      date: { en: 'Sunday, June 1 2026 · 4PM', es: 'Domingo, 1 de junio 2026 · 4PM' },
+      location: { en: 'Parque Viva, Alajuela', es: 'Parque Viva, Alajuela' },
+      desc: {
+        en: 'A full-day celebration of reggae, dancehall, and sound system culture at Costa Rica\'s largest outdoor venue. Live performances all afternoon.',
+        es: 'Una celebración de día completo de reggae, dancehall y cultura sound system en el recinto al aire libre más grande de Costa Rica.'
+      },
+      tiers: [
+        { name: { en: 'General', es: 'General' }, price: '$35' },
+        { name: { en: 'VIP',     es: 'VIP'     }, price: '$65' }
+      ],
+      bg: '#141010'
+    },
+    solemar: {
+      name: { en: 'SOLEMAR', es: 'SOLEMAR' },
+      date: { en: 'Friday, June 6 2026 · 8PM', es: 'Viernes, 6 de junio 2026 · 8PM' },
+      location: { en: 'Playa Tamarindo, Guanacaste', es: 'Playa Tamarindo, Guanacaste' },
+      desc: {
+        en: 'Sunset to sunrise on the Pacific coast. Open air, ocean breeze, and curated selectors in one of Costa Rica\'s most iconic beach destinations.',
+        es: 'Del atardecer al amanecer en la costa del Pacífico. Al aire libre, brisa del océano y selectores curados en uno de los destinos de playa más icónicos de Costa Rica.'
+      },
+      tiers: [
+        { name: { en: 'General', es: 'General' }, price: '$20' },
+        { name: { en: 'VIP',     es: 'VIP'     }, price: '$40' }
+      ],
+      bg: '#0d1310'
+    },
+    savagesundays: {
+      name: { en: 'SAVAGE SUNDAYS', es: 'SAVAGE SUNDAYS' },
+      date: { en: 'Sunday, June 8 2026 · 2PM', es: 'Domingo, 8 de junio 2026 · 2PM' },
+      location: { en: 'La Bodega, San José', es: 'La Bodega, San José' },
+      desc: {
+        en: 'The weekly ritual. Afternoon drinks, good vibes, no dress code. La Bodega\'s most beloved Sunday session — doors open at 2PM.',
+        es: 'El ritual semanal. Bebidas por la tarde, buena vibra, sin código de vestimenta. La sesión dominical más querida de La Bodega — puertas abren a las 2PM.'
+      },
+      tiers: [
+        { name: { en: 'General', es: 'General' }, price: '$12' },
+        { name: { en: 'VIP',     es: 'VIP'     }, price: '$25' }
+      ],
+      bg: '#1a0d0d'
+    },
+    neonwarehouse: {
+      name: { en: 'NEON WAREHOUSE', es: 'NEON WAREHOUSE' },
+      date: { en: 'Saturday, June 14 2026 · 11PM', es: 'Sábado, 14 de junio 2026 · 11PM' },
+      location: { en: 'Centro Comercial del Sur', es: 'Centro Comercial del Sur' },
+      desc: {
+        en: 'Industrial space transformed by neon light. Forward-thinking artists, warehouse sound, and a late-night experience like no other in San José.',
+        es: 'Espacio industrial transformado por luces de neón. Artistas de vanguardia, sonido de almacén y una experiencia nocturna única en San José.'
+      },
+      tiers: [
+        { name: { en: 'General', es: 'General' }, price: '$25' },
+        { name: { en: 'VIP',     es: 'VIP'     }, price: '$50' }
+      ],
+      bg: '#0d0d1a'
+    },
+    fashionshowcr: {
+      name: { en: 'FASHION SHOW CR', es: 'FASHION SHOW CR' },
+      date: { en: 'Thursday, June 19 2026 · 7PM', es: 'Jueves, 19 de junio 2026 · 7PM' },
+      location: { en: 'Hotel Presidente, San José', es: 'Hotel Presidente, San José' },
+      desc: {
+        en: 'Costa Rica\'s premier fashion showcase featuring independent designers and emerging local talent. An evening of culture, style, and creativity.',
+        es: 'La principal muestra de moda de Costa Rica con diseñadores independientes y talento local emergente. Una noche de cultura, estilo y creatividad.'
+      },
+      tiers: [
+        { name: { en: 'General', es: 'General' }, price: '$45' },
+        { name: { en: 'VIP',     es: 'VIP'     }, price: '$85' }
+      ],
+      bg: '#111111'
+    }
+  };
+
+  /* ── Modal open / close ──────────────────────────── */
+  var currentModalEvent = null;
+
+  function openModal(id) {
+    var ev = eventData[id];
+    if (!ev) return;
+    currentModalEvent = id;
+    var lang = currentLang;
+
+    document.getElementById('modal-poster-panel').style.background = ev.bg;
+    document.getElementById('modal-poster-name').textContent = ev.name[lang];
+
+    var fields = [
+      { id: 'modal-event-title', key: 'name'     },
+      { id: 'modal-date',        key: 'date'     },
+      { id: 'modal-location',    key: 'location' },
+      { id: 'modal-desc',        key: 'desc'     }
+    ];
+    fields.forEach(function(f) {
+      var el = document.getElementById(f.id);
+      el.dataset.en = ev[f.key].en;
+      el.dataset.es = ev[f.key].es;
+      el.textContent = ev[f.key][lang];
+    });
+
+    ev.tiers.forEach(function(tier, i) {
+      var el = document.getElementById('modal-tier-' + i);
+      if (!el) return;
+      var textEn = tier.name.en + '  ·  ' + tier.price;
+      var textEs = tier.name.es + '  ·  ' + tier.price;
+      el.dataset.en = textEn;
+      el.dataset.es = textEs;
+      el.textContent = (lang === 'en') ? textEn : textEs;
+    });
+
+    document.getElementById('event-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('event-modal').classList.remove('open');
+    document.body.style.overflow = '';
+    currentModalEvent = null;
+  }
+
+  function handleModalOverlayClick(e) {
+    if (e.target === document.getElementById('event-modal')) closeModal();
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  /* ── Hero logo: eye tracking & blinking ─────────── */
+  (function() {
+    var svg      = document.getElementById('fomo-logo-svg');
+    var eyeLeft  = document.getElementById('eye-left');
+    var eyeRight = document.getElementById('eye-right');
+    if (!svg || !eyeLeft || !eyeRight) return;
+
+    // SVG viewBox: 711 × 282
+    // White "O" inner bounds (the gap the pupil can travel inside):
+    //   Left O:  x 177–317, y 0–282  → inner usable x: 177–317, but pupil is 41 wide
+    //   Right O: x 571–711, y 0–282  → inner usable x: 571–711, but pupil is 41 wide
+    // Pupil (black rect): width 41, height 190
+    // Horizontal slack = (O width 140 - pupil width 41) / 2 = 49.5 → use 48
+    // Vertical slack   = (O height 282 - pupil height 190) / 2 = 46   → use 44
+    // O socket: width=140, height=282. Pupil: width=41, height=190.
+    // Travel half-range: travelX=49.5, travelY=46 (SVG units from center to edge)
+    // Asymmetric padding scaled from design reference (86w × 169h) to actual travel (99 × 92):
+    //   scaleX = 99/86, scaleY = 92/169
+    //   paddingX = 15.5 * scaleX ≈ 17.84  →  left/right border thicker
+    //   paddingY = 10   * scaleY ≈  5.44  →  top/bottom border thinner
+    var travelX    = 49.5;
+    var travelY    = 46;
+    var scaleX     = 99 / 86;
+    var scaleY     = 92 / 169;
+    var paddingX   = 15.5 * scaleX; // ≈ 17.84 SVG units
+    var paddingY   = 10   * scaleY; // ≈  5.44 SVG units
+    var maxOffsetX = travelX - paddingX; // ≈ 31.66 SVG units
+    var maxOffsetY = travelY - paddingY; // ≈ 40.56 SVG units
+
+    // Center of each O socket — anchor for symmetric travel
+    var centerLX = 226.5; // 177 + travelX
+    var centerRX = 620.5; // 571 + travelX
+    var centerY  = 46;    // (282 - 190) / 2
+
+    var eyeTrackingEnabled = false;
+    var targetX = 0, targetY = 0;
+    var currentX = 0, currentY = 0;
+    var EASE = 0.18;
+
+    // Exposed so the intro IIFE can enable tracking immediately when skipping
+    window._enableEyeTracking = function() { eyeTrackingEnabled = true; };
+
+    if (window.innerWidth >= 768) {
+      // Mousemove only updates targets — never touches the DOM directly
+      document.addEventListener('mousemove', function(e) {
+        if (!eyeTrackingEnabled) return;
+        var normX = (e.clientX / window.innerWidth)  * 2 - 1;
+        var normY = (e.clientY / window.innerHeight) * 2 - 1;
+        targetX = Math.max(-maxOffsetX, Math.min(maxOffsetX, normX * maxOffsetX));
+        targetY = Math.max(-maxOffsetY, Math.min(maxOffsetY, normY * maxOffsetY));
+      });
+
+      // RAF loop: smoothly interpolate current toward target, then write to SVG
+      (function loop() {
+        requestAnimationFrame(loop);
+        if (!eyeTrackingEnabled) return;
+        currentX += (targetX - currentX) * EASE;
+        currentY += (targetY - currentY) * EASE;
+        eyeLeft.setAttribute('x',  centerLX + currentX);
+        eyeLeft.setAttribute('y',  centerY  + currentY);
+        eyeRight.setAttribute('x', centerRX + currentX);
+        eyeRight.setAttribute('y', centerY  + currentY);
+      })();
+    }
+
+    // Enable tracking 500ms after intro finishes; current stays at 0,0 so
+    // the eyes ease from their resting position toward wherever the cursor is
+    setTimeout(function() { eyeTrackingEnabled = true; }, 3350);
+
+    // Blink every ~3.5s — slower, more natural
+    setInterval(function() {
+      eyeLeft.style.transform  = 'scaleY(0.1)';
+      eyeRight.style.transform = 'scaleY(0.1)';
+      setTimeout(function() {
+        eyeLeft.style.transform  = 'scaleY(1)';
+        eyeRight.style.transform = 'scaleY(1)';
+      }, 200);
+    }, 3500);
+  })();
+
+  /* ── Form: visibility toggle ─────────────────────── */
+  document.querySelectorAll('.vis-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.vis-btn').forEach(function(b) {
+        b.classList.remove('selected');
+      });
+      this.classList.add('selected');
+      var val = this.dataset.value;
+
+      var note = document.getElementById('passcode-note');
+      note.style.display = (val === 'private' || val === 'invitation') ? 'block' : 'none';
+
+      var addlField = document.getElementById('additional-images-field');
+      if (val === 'private') {
+        addlField.style.display = 'block';
+        requestAnimationFrame(function() { addlField.style.opacity = '1'; });
+      } else {
+        addlField.style.opacity = '0';
+        setTimeout(function() { addlField.style.display = 'none'; }, 300);
+      }
+    });
+  });
+
+  /* ── Form: add ticket tier ───────────────────────── */
+  var trashSVG =
+    '<svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M1 4h14M5 4V2h6v2M2.5 4L4 16h8l1.5-12" stroke="#666666" stroke-width="1.5"' +
+    ' stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  document.getElementById('add-tier-btn').addEventListener('click', function() {
+    var lang = currentLang;
+    var row = document.createElement('div');
+    row.className = 'tier-row';
+    var tooltip = lang === 'en' ? 'Remove tier' : 'Eliminar tier';
+    row.innerHTML =
+      '<input class="form-input" type="text"' +
+        ' data-en="e.g. General" data-es="ej. General"' +
+        ' placeholder="' + (lang === 'en' ? 'e.g. General' : 'ej. General') + '" />' +
+      '<input class="form-input" type="number" placeholder="$0" min="0" />' +
+      '<button type="button" class="tier-delete-btn" onclick="removeTier(this)"' +
+        ' data-en="Remove tier" data-es="Eliminar tier" title="' + tooltip + '">' +
+        trashSVG +
+      '</button>';
+    document.getElementById('tier-container').appendChild(row);
+  });
+
+  /* ── Form: remove tier row ───────────────────────── */
+  function removeTier(btn) {
+    var row = btn.closest('.tier-row');
+    var container = document.getElementById('tier-container');
+    if (container.querySelectorAll('.tier-row').length === 1) {
+      row.querySelectorAll('input').forEach(function(inp) { inp.value = ''; });
+    } else {
+      row.remove();
+    }
+  }
+
+  /* ── Mobile sticky logo handoff ─────────────────── */
+  (function() {
+    if (window.innerWidth >= 768) return;
+    var logoBlock = document.querySelector('.hero-logo-block');
+    var mobileBar = document.getElementById('mobile-logo-bar');
+    if (!logoBlock || !mobileBar) return;
+
+    function update() {
+      var rect = logoBlock.getBoundingClientRect();
+      var top  = rect.top;
+      var h    = rect.height;
+
+      if (top >= 0) {
+        // Logo still fully visible — bar stays hidden above
+        mobileBar.style.transform = 'translateY(-100%)';
+      } else if (top <= -h) {
+        // Logo fully gone — bar locked at top
+        mobileBar.style.transform = 'translateY(0)';
+      } else {
+        // Logo is mid-exit: mirror its position exactly
+        // top goes 0 → -h, bar goes -100% → 0
+        var progress = -top / h; // 0 → 1
+        mobileBar.style.transform = 'translateY(' + (-100 + progress * 100) + '%)';
+      }
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+
+  /* ── Mobile sticky bar + menu ───────────────────── */
+  (function() {
+    var bar       = document.getElementById('mobile-logo-bar');
+    var hamburger = document.getElementById('mobileHamburger');
+    var panel     = document.getElementById('mobileMenuPanel');
+    if (!bar || !hamburger || !panel) return;
+
+    // Logo tap → back to hero
+    bar.addEventListener('click', function(e) {
+      if (hamburger.contains(e.target)) return;
+      panel.classList.remove('is-open');
+      document.getElementById('hero').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Hamburger → toggle menu
+    hamburger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      panel.style.paddingTop = bar.offsetHeight + 'px';
+      panel.classList.toggle('is-open');
+    });
+
+    // Nav buttons → scroll + close
+    document.querySelectorAll('[data-mobile-scroll]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var target = document.getElementById(btn.getAttribute('data-mobile-scroll'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+        panel.classList.remove('is-open');
+      });
+    });
+
+    // Tap outside → close
+    document.addEventListener('click', function(e) {
+      if (!panel.classList.contains('is-open')) return;
+      if (!panel.contains(e.target) && !bar.contains(e.target)) {
+        panel.classList.remove('is-open');
+      }
+    });
+  })();
+
+  /* ── Desktop slide-out menu ─────────────────────── */
+  (function() {
+    var marquee   = document.querySelector('.left-marquee');
+    var panel     = document.getElementById('desktopMenuPanel');
+    var closeBtn  = document.getElementById('desktopMenuClose');
+
+    if (marquee && panel) {
+      marquee.addEventListener('click', function() {
+        panel.classList.toggle('is-open');
+      });
+    }
+
+    if (closeBtn && panel) {
+      closeBtn.addEventListener('click', function() {
+        panel.classList.remove('is-open');
+      });
+    }
+
+    document.querySelectorAll('[data-scroll-target]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var target = document.getElementById(btn.getAttribute('data-scroll-target'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+        if (panel) panel.classList.remove('is-open');
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!panel || !panel.classList.contains('is-open')) return;
+      if (!panel.contains(e.target) && !marquee.contains(e.target)) {
+        panel.classList.remove('is-open');
+      }
+    });
+  })();
+
+  /* ── Private event sandbox ──────────────────────── */
+  (function() {
+    var searchInput = document.getElementById('private-passcode-input');
+    var resultCard  = document.getElementById('priv-result-card');
+    var pwTrack     = document.getElementById('priv-track');
+    var pwInput     = document.getElementById('priv-pw-input');
+    var pwBtn       = document.getElementById('priv-pw-btn');
+    var pwError     = document.getElementById('priv-pw-error');
+
+    if (!searchInput || !resultCard || !pwTrack) return;
+
+    var SANDBOX_PW  = '123FOMO';
+    var navToAccess = document.getElementById('priv-nav-to-access');
+    var overlay     = document.getElementById('priv-event-overlay');
+
+    function levenshtein(a, b) {
+      if (a === b) return 0;
+      var m = a.length, n = b.length, dp = [], i, j;
+      for (i = 0; i <= m; i++) { dp[i] = [i]; }
+      for (j = 0; j <= n; j++) { dp[0][j] = j; }
+      for (i = 1; i <= m; i++) {
+        for (j = 1; j <= n; j++) {
+          dp[i][j] = a[i-1] === b[j-1]
+            ? dp[i-1][j-1]
+            : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+        }
+      }
+      return dp[m][n];
+    }
+
+    // Fuzzy match: partial substring OR per-word typo tolerance
+    function fuzzyMatch(query, target) {
+      query  = query.toLowerCase().trim();
+      target = target.toLowerCase();
+      if (query.length < 3) return false;
+      if (target.includes(query)) return true;
+      var qWords = query.split(/\s+/);
+      var tWords = target.split(/\s+/);
+      return qWords.every(function(qw) {
+        if (qw.length < 3) return true;
+        return tWords.some(function(tw) {
+          if (tw.startsWith(qw)) return true;
+          return levenshtein(qw, tw) <= (qw.length <= 4 ? 1 : 2);
+        });
+      });
+    }
+
+    searchInput.addEventListener('input', function() {
+      resultCard.classList.toggle('is-visible', fuzzyMatch(searchInput.value, 'Trojan Fest'));
+    });
+
+    resultCard.addEventListener('click', function() {
+      pwTrack.style.transform = 'translateX(-50%)';
+      setTimeout(function() { if (pwInput) pwInput.focus(); }, 520);
+    });
+
+    function checkPassword() {
+      if (!pwInput) return;
+      if (pwInput.value === SANDBOX_PW) {
+        pwError.classList.remove('is-visible');
+        overlay.classList.add('is-visible');
+      } else {
+        pwInput.value = '';
+        pwError.classList.add('is-visible');
+        setTimeout(function() { pwError.classList.remove('is-visible'); }, 2400);
+      }
+    }
+
+    if (pwBtn)      pwBtn.addEventListener('click', checkPassword);
+    if (pwInput)    pwInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkPassword();
+    });
+    if (navToAccess) navToAccess.addEventListener('click', function() {
+      overlay.classList.remove('is-visible');
+      // Hide result card immediately — overlay still covers so no flash visible
+      resultCard.classList.remove('is-visible');
+      // Reset everything else after overlay finishes sliding out
+      setTimeout(function() {
+        pwTrack.style.transition = 'none';
+        pwTrack.style.transform  = 'translateX(0)';
+        pwTrack.offsetHeight;
+        pwTrack.style.transition = '';
+        searchInput.value = '';
+        if (pwInput) pwInput.value = '';
+        if (pwError) pwError.classList.remove('is-visible');
+      }, 650);
+    });
+  })();
+
+  /* ── Mobile public events slideshow ─────────────── */
+  (function() {
+    if (window.innerWidth >= 768) return;
+    var container = document.querySelector('.events-grid-container');
+    if (!container) return;
+    var origCards = Array.from(container.querySelectorAll('.pub-event-card'));
+    if (origCards.length < 2) return;
+
+    var track = document.createElement('div');
+    track.className = 'events-slide-track';
+
+    // Duplicate cards so the carousel can loop right infinitely without snapping back
+    var allCards = origCards.concat(origCards.map(function(c) { return c.cloneNode(true); }));
+    allCards.forEach(function(c) { track.appendChild(c); });
+    container.appendChild(track);
+
+    var gap        = 12;
+    var containerW = container.offsetWidth;
+    var cardW      = containerW * 0.78;
+    var sideGap    = (containerW - cardW) / 2;
+    var n          = origCards.length;
+
+    allCards.forEach(function(c) { c.style.width = cardW + 'px'; });
+    track.style.paddingLeft  = sideGap + 'px';
+    track.style.paddingRight = sideGap + 'px';
+
+    var current = 0;
+
+    function setActive(idx) {
+      allCards.forEach(function(c) { c.classList.remove('slide-active'); });
+      allCards[idx].classList.add('slide-active');
+    }
+
+    function goTo(idx, animate) {
+      if (animate === false) track.style.transition = 'none';
+      else track.style.transition = 'transform 0.42s cubic-bezier(0.4,0,0.2,1)';
+      track.style.transform = 'translateX(-' + (idx * (cardW + gap)) + 'px)';
+      current = idx;
+      setActive(idx);
+    }
+
+    // After sliding to a clone, silently jump back to the original position
+    track.addEventListener('transitionend', function() {
+      if (current >= n) goTo(current - n, false);
+    });
+
+    goTo(0, false);
+
+    function advance() {
+      goTo(current + 1, true);
+    }
+
+    var timer = setInterval(advance, 3000);
+
+    var touchStartX = 0;
+    var touchStartY = 0;
+    var dragging = false;
+
+    container.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      dragging = false;
+    }, { passive: true });
+
+    container.addEventListener('touchmove', function(e) {
+      var dx = Math.abs(e.touches[0].clientX - touchStartX);
+      var dy = Math.abs(e.touches[0].clientY - touchStartY);
+      if (dx > dy && dx > 8) { dragging = true; e.preventDefault(); }
+    }, { passive: false });
+
+    container.addEventListener('touchend', function(e) {
+      var delta = e.changedTouches[0].clientX - touchStartX;
+      if (delta < -40) {
+        // Swipe left = advance to the right
+        clearInterval(timer);
+        advance();
+        timer = setInterval(advance, 3000);
+      }
+      // Swipe right is ignored — carousel only moves right
+      setTimeout(function() { dragging = false; }, 0);
+    });
+
+    container.addEventListener('click', function(e) {
+      if (dragging) e.stopPropagation();
+    }, true);
+  })();
+
+  /* ── Form: submit ────────────────────────────────── */
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    var msg = document.getElementById('form-submit-message');
+    msg.style.display = 'block';
+    var lang = currentLang;
+    msg.textContent = lang === 'en'
+      ? 'Your event has been submitted. We will review and publish it shortly.'
+      : 'Tu evento ha sido enviado. Lo revisaremos y publicaremos pronto.';
+  }
+
+
+  /* ── Intro loader sequence ──────────────────────── */
+  (function() {
+    var loader = document.getElementById('introLoader');
+    if (!loader) return;
+
+    // Play once per tab session; skip on refresh
+    var shouldPlay = !sessionStorage.getItem('fomoIntroPlayed');
+
+    if (!shouldPlay) {
+      loader.style.display = 'none';
+      if (typeof window._enableEyeTracking === 'function') window._enableEyeTracking();
+      return;
+    }
+
+    sessionStorage.setItem('fomoIntroPlayed', 'true');
+
+    var eyeL = document.getElementById('intro-eye-l');
+    var eyeR = document.getElementById('intro-eye-r');
+    var EASE = 'cubic-bezier(0.4,0,0.2,1)';
+    var DUR  = 820;
+
+    // ── Derive exact O-block and pupil geometry from the live hero SVG ────
+    // The hero SVG (viewBox 0 0 711 282) has:
+    //   Left  O white block: x=177, w=140, h=282 (full height)
+    //   Right O white block: x=571, w=140, h=282
+    //   Each pupil:          x_offset=74 within O, y=17, w=41, h=190
+    var hSVG = document.getElementById('fomo-logo-svg');
+    var hBOX = document.querySelector('.hero-logo-block');
+    var hSR  = hSVG.getBoundingClientRect();
+
+    var sX = hSR.width  / 711;   // screen px per SVG unit (X)
+    var sY = hSR.height / 282;   // screen px per SVG unit (Y)
+
+    // Rendered O-block size (same for both Os)
+    var oW = 140 * sX;
+    var oH = hSR.height;          // O spans the full SVG height
+
+    // Exact hero O positions in screen coords — directly from the SVG layout
+    var leftO  = { left: hSR.left + 177 * sX, top: hSR.top, width: oW, height: oH };
+    var rightO = { left: hSR.left + 571 * sX, top: hSR.top, width: oW, height: oH };
+
+    // Pupil geometry within each O block
+    var pL = 74  * sX;   // pupil left offset inside O
+    var pT = 17  * sY;   // pupil top  offset inside O
+    var pW = 41  * sX;   // pupil width
+    var pH = 190 * sY;   // pupil height
+
+    // ── Position intro eyes centred on screen, much tighter than hero gap ──
+    // INTRO_GAP_RATIO: 0 = eyes touching, 1 = full hero gap. ~0.12 feels close.
+    var INTRO_GAP_RATIO = 0.12;
+
+    var gap      = rightO.left - (leftO.left + oW);  // exact hero inter-O gap
+    var introGap = gap * INTRO_GAP_RATIO;             // start almost touching
+    var pairW    = 2 * oW + introGap;
+    var introTop = (window.innerHeight - oH)   / 2;
+    var introL   = (window.innerWidth  - pairW) / 2;
+    var introR   = introL + oW + introGap;
+
+    function place(el, l, t, w, h) {
+      el.style.left   = l + 'px';
+      el.style.top    = t + 'px';
+      el.style.width  = w + 'px';
+      el.style.height = h + 'px';
+    }
+
+    place(eyeL, introL, introTop, oW, oH);
+    place(eyeR, introR, introTop, oW, oH);
+
+    // Style pupils inside each O block
+    loader.querySelectorAll('.intro-eye-pupil').forEach(function(p) {
+      p.style.left   = pL + 'px';
+      p.style.top    = pT + 'px';
+      p.style.width  = pW + 'px';
+      p.style.height = pH + 'px';
+    });
+
+    // ── Animation sequence ────────────────────────────────────────────────
+
+    // 300ms: open eyes
+    setTimeout(function() {
+      loader.classList.add('is-opening');
+    }, 300);
+
+    // 750ms: blink twice
+    setTimeout(function() {
+      loader.classList.add('is-blinking');
+    }, 750);
+
+    // 1700ms: slide eyes to exact hero O positions, collapse loader to logo block
+    setTimeout(function() {
+      var hBoxR = hBOX.getBoundingClientRect();
+      var TRANS = DUR + 'ms ' + EASE;
+      var pos   = 'left ' + TRANS + ',top ' + TRANS + ',width ' + TRANS + ',height ' + TRANS;
+
+      // Lock loader to explicit px (CSS vw/vh can't interpolate with px)
+      loader.style.top     = '0px';
+      loader.style.left    = '0px';
+      loader.style.width   = window.innerWidth  + 'px';
+      loader.style.height  = window.innerHeight + 'px';
+      loader.style.overflow = 'hidden';
+
+      // Register transitions before flush
+      eyeL.style.transition   = pos;
+      eyeR.style.transition   = pos;
+      loader.style.transition = pos;
+
+      // Flush — browser captures current computed values as transition start
+      loader.offsetHeight;
+
+      // Eyes slide to their exact hero O positions (no offset, no guessing)
+      place(eyeL, leftO.left,  leftO.top,  leftO.width,  leftO.height);
+      place(eyeR, rightO.left, rightO.top, rightO.width, rightO.height);
+
+      // Black loader box collapses into the hero logo block
+      loader.style.left   = hBoxR.left   + 'px';
+      loader.style.top    = hBoxR.top    + 'px';
+      loader.style.width  = hBoxR.width  + 'px';
+      loader.style.height = hBoxR.height + 'px';
+    }, 1700);
+
+    // 2540ms: fade out loader (eye divs are DOM children → fade with it)
+    setTimeout(function() {
+      loader.style.transition = 'opacity 0.28s ease';
+      loader.style.opacity    = '0';
+      setTimeout(function() { loader.style.display = 'none'; }, 310);
+    }, 2540);
+  })();
+
+</script>
+
+</body>
+</html>

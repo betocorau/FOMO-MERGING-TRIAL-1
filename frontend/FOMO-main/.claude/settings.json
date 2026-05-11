@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-Content \"c:\\\\Users\\\\betoc\\\\OneDrive\\\\Desktop\\\\FOMO\\\\FOMO\\\\index.html\")",
+      "Bash(Measure-Object -Line)"
+    ]
+  }
+}
